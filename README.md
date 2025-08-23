@@ -1,2 +1,2 @@
 # devops_practice_001_terraform
-CICD Testing
+CICD Testing - Terraform IaC
