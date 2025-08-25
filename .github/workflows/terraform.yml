@@ -63,7 +63,7 @@ jobs:
         run: terraform validate
 
       - name: Plan
-        run: terraform plan -input=false -out=tfplan
+        run: terraform plan -input=false -out=tfplan -var "aws_acc_id=${{ secrets.AWS_ACC_ID }}"
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
