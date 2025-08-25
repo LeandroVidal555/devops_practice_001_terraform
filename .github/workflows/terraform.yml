@@ -88,8 +88,8 @@ jobs:
         run: terraform init -input=false
 
       - name: Get artifact from plan job
-        - uses: actions/download-artifact@v4
-          with: { name: tfplan }
+        uses: actions/download-artifact@v4
+        with: { name: tfplan }
 
       - name: Apply saved plan
         run: terraform apply -input=false -auto-approve tfplan
