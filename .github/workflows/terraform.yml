@@ -33,6 +33,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Show OIDC claims
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const idt = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(idt.split('.')[1], 'base64').toString());
+            console.log('aud:', claims.aud);
+            console.log('sub:', claims.sub);
+
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
