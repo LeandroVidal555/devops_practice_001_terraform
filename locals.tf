@@ -1,9 +1,8 @@
 locals {
-  common_tags = {
-    Environment = var.env
-    ManagedBy   = "Terraform"
-    Project     = "DevOps Practice 001"
-    Owner       = "Leandro Vidal"
-    Contact     = "lmv.vidal@gmail.com"
+  ecr_repos = {
+    "app" = {
+      image_tag_mutability = "MUTABLE"
+      scan_on_push         = false
+    }
   }
 }

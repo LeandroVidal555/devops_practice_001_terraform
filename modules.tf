@@ -1,12 +1,5 @@
-#module "eks" {
-#  source  = "terraform-aws-modules/eks/aws"
-#  version = "~> 21.1.1"
-# gptazo
-
-#}
-
 module "ecr" {
-  for_each = var.ecr_repos
+  for_each = local.ecr_repos
   source   = "./ecr"
 
   repo_name            = "${var.common_prefix}-${each.key}"
