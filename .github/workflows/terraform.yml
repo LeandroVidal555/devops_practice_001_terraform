@@ -14,7 +14,6 @@ on:
 
 env:
   TF_WORKING_DIR: .
-  APPLY_TF: ${{ vars.APPLY_TF }}
 
 concurrency:
   group: terraform-${{ github.ref }}
@@ -74,7 +73,7 @@ jobs:
 
   apply:
     needs: plan
-    if: ${{ env.APPLY_TF }} == 'true'
+    if: ${{ vars.APPLY_TF == 'true' }}
     runs-on: ubuntu-latest
     environment: dev
     defaults:
