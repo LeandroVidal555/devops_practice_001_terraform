@@ -71,14 +71,8 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
-      - name: Output var
-        run: ${{ vars.APPLY_TF == 'true' }}
-
-      - name: Output var
-        run: ${{ vars.APPLY_TF == 'true' && 0 }}
-
-      - name: Output var
-        run: echo vars.APPLY_TF
+      - name: Output conditional
+        run: echo ${{ vars.APPLY_TF == 'true' && ( (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' ) }}
 
   apply:
     needs: plan
