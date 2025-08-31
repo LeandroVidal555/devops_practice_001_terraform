@@ -72,10 +72,13 @@ jobs:
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
       - name: Output var
-        run: ${{ vars.APPLY_TF }}
+        run: ${{ vars.APPLY_TF == 'true' }}
 
       - name: Output var
-        run: vars.APPLY_TF
+        run: ${{ vars.APPLY_TF == 'true' && 0 }}
+
+      - name: Output var
+        run: echo vars.APPLY_TF
 
   apply:
     needs: plan
