@@ -14,6 +14,7 @@ on:
 
 env:
   TF_WORKING_DIR: .
+  APPLY_TF: ${{ vars.APPLY_TF }}
 
 concurrency:
   group: terraform-${{ github.ref }}
@@ -71,12 +72,9 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
-      - name: Output conditional
-        run: echo ${{ vars.APPLY_TF == 'true' }}
-
   apply:
     needs: plan
-    if: ${{ vars.APPLY_TF == 'true' }}
+    if: ${{ env.APPLY_TF == 'true' }}
     runs-on: ubuntu-latest
     environment: dev
     defaults:
