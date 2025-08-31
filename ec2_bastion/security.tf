@@ -39,7 +39,7 @@ resource "aws_iam_instance_profile" "bastion" {
 resource "aws_security_group" "bastion" {
   name        = "${var.name}-sg"
   description = "Bastion SG (SSM only)"
-  vpc_id      = module.vpc.vpc_id
+  vpc_id      = var.vpc_id
 
   egress {
     from_port   = 0
