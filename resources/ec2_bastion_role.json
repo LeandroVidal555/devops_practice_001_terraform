@@ -1,0 +1,38 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "CloudWatchLogsAndMetrics",
+        "Effect": "Allow",
+        "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents",
+          "logs:DescribeLogGroups",
+          "logs:DescribeLogStreams",
+          "cloudwatch:PutMetricData"
+        ],
+        "Resource": "*"
+      },
+      {
+        "Sid": "EKSManagementRead",
+        "Effect": "Allow",
+        "Action": [
+          "eks:DescribeCluster",
+          "eks:ListClusters",
+          "eks:ListNodegroups",
+          "eks:DescribeNodegroup",
+          "eks:ListFargateProfiles",
+          "eks:DescribeFargateProfile",
+          "eks:ListUpdates",
+          "eks:DescribeUpdate",
+          "eks:ListAddons",
+          "eks:DescribeAddon",
+          "eks:ListIdentityProviderConfigs",
+          "eks:DescribeIdentityProviderConfig"
+        ],
+        "Resource": "*"
+      }
+    ]
+  }
+  

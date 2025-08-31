@@ -7,3 +7,14 @@ module "ecr" {
   scan_on_push         = each.value.scan_on_push
 
 }
+
+module "ec2_bastion" {
+  source = "./ec2_bastion"
+
+  name           = "${var.env}-${var.common_prefix}-bastion"
+  instance_type  = local.bastion.instance_type
+  ami_id         = local.bastion.ami_id
+  subnet_id      = local.bastion.subnet_id
+  user_data_file = local.bastion.user_data_file
+  policy_file    = local.bastion.policy_file
+}
