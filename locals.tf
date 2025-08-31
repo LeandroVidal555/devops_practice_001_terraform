@@ -14,14 +14,14 @@ locals {
     desired_size            = 1
     min_size                = 0
     max_size                = 2
-    ami_type                = "AL2023_x86_64"
+    ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
   }
   bastion = {
     instance_type  = "t3a.micro"
     ami_id         = "ami-0b016c703b95ecbe4"
     subnet_id      = module.vpc.private_subnets[0]
-    user_data_file = "${path.module}/resources/user_data_bastion.sh"
-    policy_file    = "${path.module}/resources/ec2_bastion_role.sh"
+    user_data_file = "../resources/user_data_bastion.sh"
+    policy_file    = "../resources/ec2_bastion_role.sh"
   }
 }
