@@ -15,7 +15,7 @@ resource "aws_iam_role" "bastion" {
 
 resource "aws_iam_policy" "bastion_general" {
   name   = "${var.name}-general"
-  policy = file(var.policy_file)
+  policy = var.policy_file
 }
 
 # Attach to your existing bastion role
