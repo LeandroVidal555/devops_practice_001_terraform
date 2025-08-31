@@ -14,7 +14,7 @@ locals {
     desired_size            = 1
     min_size                = 0
     max_size                = 2
-    ami_type                = "AL2_x86_64"
+    ami_type                = "AL2023_x86_64"
     disk_size               = 20
   }
   bastion = {
