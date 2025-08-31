@@ -1,3 +1,13 @@
+data "aws_iam_policy_document" "bastion_assume" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
 resource "aws_iam_role" "bastion" {
   name               = "${var.name}-role"
   assume_role_policy = data.aws_iam_policy_document.bastion_assume.json

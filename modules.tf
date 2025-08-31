@@ -17,4 +17,5 @@ module "ec2_bastion" {
   subnet_id      = local.bastion.subnet_id
   user_data_file = local.bastion.user_data_file
   policy_file    = local.bastion.policy_file
+  vpc_id         = module.vpc.vpc_id
 }
