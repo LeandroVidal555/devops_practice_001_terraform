@@ -21,7 +21,7 @@ locals {
     instance_type  = "t3a.micro"
     ami_id         = "ami-0b016c703b95ecbe4"
     subnet_id      = module.vpc.private_subnets[0]
-    user_data_file = file("${path.root}/resources/user_data_bastion.sh")
-    policy_file    = file("${path.root}/resources/ec2_bastion_role.sh")
+    user_data_file = file("${path.module}/resources/user_data_bastion.sh")
+    policy_file    = file("${path.module}/resources/ec2_bastion_role.sh")
   }
 }
