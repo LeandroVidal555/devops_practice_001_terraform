@@ -16,6 +16,7 @@ locals {
     max_size                = 2
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
+    admin_roles             = ["AWSReservedSSO_AdministratorAccess_e59d6194b0ea5059", "${var.env}-${var.common_prefix}-bastion-profile"]
   }
   bastion = {
     instance_type  = "t3a.micro"

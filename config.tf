@@ -1,3 +1,5 @@
+data "aws_caller_identity" "current" {}
+
 terraform {
   backend "s3" {
     bucket  = "devops-practice-lmv-dev"
