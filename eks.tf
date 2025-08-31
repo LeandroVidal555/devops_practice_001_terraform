@@ -43,14 +43,14 @@ module "eks" {
 }
 
 resource "aws_eks_access_entry" "admin_roles" {
-  for_each      = toset(local.eks_cluster.admin_roles)
+  for_each = toset(local.eks_cluster.admin_roles)
 
   cluster_name  = module.eks.cluster_name
   principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${each.key}"
 }
 
 resource "aws_eks_access_policy_association" "admin_roles_policies" {
-  for_each      = aws_eks_access_entry.admin_roles
+  for_each = aws_eks_access_entry.admin_roles
 
   cluster_name  = module.eks.cluster_name
   principal_arn = each.value.principal_arn
