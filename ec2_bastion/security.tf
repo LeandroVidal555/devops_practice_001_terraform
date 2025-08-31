@@ -10,7 +10,7 @@ data "aws_iam_policy_document" "this_assume" {
 
 resource "aws_iam_role" "this" {
   name               = "${var.name}-role"
-  assume_role_policy = data.aws_iam_policy_document.bastion_assume.json
+  assume_role_policy = data.aws_iam_policy_document.this_assume.json
 }
 
 resource "aws_iam_policy" "this_general" {
@@ -18,21 +18,19 @@ resource "aws_iam_policy" "this_general" {
   policy = var.policy_file
 }
 
-# Attach to your existing bastion role
 resource "aws_iam_role_policy_attachment" "this_general" {
-  role       = aws_iam_role.bastion.name
-  policy_arn = aws_iam_policy.bastion_general.arn
+  role       = aws_iam_role.this.name
+  policy_arn = aws_iam_policy.this_general.arn
 }
 
-# SSM access + basic ECR read (handy) + CloudWatch logs
-resource "aws_iam_role_policy_attachment" "bastion_ssm" {
-  role       = aws_iam_role.bastion.name
+resource "aws_iam_role_policy_attachment" "this_ssm" {
+  role       = aws_iam_role.this.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
 resource "aws_iam_instance_profile" "this_profile" {
   name = "${var.name}-profile"
-  role = aws_iam_role.bastion.name
+  role = aws_iam_role.this.name
 }
 
 # SG: egress only (no inbound needed with SSM)
