@@ -72,11 +72,11 @@ jobs:
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
       - name: Output conditional
-        run: echo ${{ vars.APPLY_TF == 'true' && ( (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' ) }}
+        run: echo ${{ vars.APPLY_TF == 'true' }}
 
   apply:
     needs: plan
-    if: ${{ vars.APPLY_TF == 'true' && ( (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch' ) }}
+    if: ${{ vars.APPLY_TF == 'true' }}
     runs-on: ubuntu-latest
     environment: dev
     defaults:
