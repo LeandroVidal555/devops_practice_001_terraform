@@ -73,7 +73,7 @@ jobs:
 
   apply:
     needs: plan
-    if: ${{ vars.APPLY_TF == 'true' }}
+    if: ${{ vars.APPLY_TF == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
     runs-on: ubuntu-latest
     environment: dev
     defaults:
