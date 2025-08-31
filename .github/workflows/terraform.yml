@@ -74,7 +74,7 @@ jobs:
 
   apply:
     needs: plan
-    if: ${{ env.APPLY_TF == 'true' }}
+    if: env.APPLY_TF == 'true'
     runs-on: ubuntu-latest
     environment: dev
     defaults:
