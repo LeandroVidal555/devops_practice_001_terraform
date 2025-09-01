@@ -2,6 +2,7 @@
 variable "aws_region" { type = string }
 variable "common_prefix" { type = string }
 variable "env" { type = string }
+variable "admin_sso_role_hash" { type = string }
 
 #### VPC ####
 variable "vpc_cidr" { type = string }

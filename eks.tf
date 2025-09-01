@@ -23,30 +23,30 @@ module "eks" {
   # Let the creator be cluster admin
   enable_cluster_creator_admin_permissions = true
 
-  eks_managed_node_groups = {
-    workers = {
-      kubernetes_version = local.eks_cluster.k8s_version
-      capacity_type      = local.eks_cluster.capacity_type
-      instance_types     = local.eks_cluster.instance_types
+  #eks_managed_node_groups = {
+  #  workers = {
+  #    kubernetes_version = local.eks_cluster.k8s_version
+  #    capacity_type      = local.eks_cluster.capacity_type
+  #    instance_types     = local.eks_cluster.instance_types
 
-      min_size     = local.eks_cluster.min_size
-      desired_size = local.eks_cluster.desired_size
-      max_size     = local.eks_cluster.max_size
+  #    min_size     = local.eks_cluster.min_size
+  #    desired_size = local.eks_cluster.desired_size
+  #    max_size     = local.eks_cluster.max_size
 
-      ami_type  = local.eks_cluster.ami_type
-      disk_size = local.eks_cluster.disk_size
+  #    ami_type  = local.eks_cluster.ami_type
+  #    disk_size = local.eks_cluster.disk_size
 
-      subnet_ids = module.vpc.private_subnets
-      labels     = { workload = "general_workers" }
-    }
-  }
+  #    subnet_ids = module.vpc.private_subnets
+  #    labels     = { workload = "general_workers" }
+  #  }
+  #}
 }
 
 resource "aws_eks_access_entry" "admin_roles" {
   for_each = toset(local.eks_cluster.admin_roles)
 
   cluster_name  = module.eks.cluster_name
-  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${each.key}"
+  principal_arn = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:${each.key}"
 }
 
 resource "aws_eks_access_policy_association" "admin_roles_policies" {
@@ -59,4 +59,14 @@ resource "aws_eks_access_policy_association" "admin_roles_policies" {
   access_scope {
     type = "cluster"
   }
+}
+
+resource "aws_security_group_rule" "bastion_access" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  description              = "Bastion to EKS API"
+  security_group_id        = module.eks.cluster_security_group_id
+  source_security_group_id = module.ec2_bastion.security_group_id
 }
