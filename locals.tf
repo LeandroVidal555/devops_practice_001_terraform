@@ -23,7 +23,6 @@ locals {
   }
   bastion = {
     instance_type  = "t3a.micro"
-    ami_id         = "resolve:ssm:/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64"
     subnet_id      = module.vpc.private_subnets[0]
     user_data_file = file("${path.module}/resources/user_data_bastion.sh")
     policy_file    = file("${path.module}/resources/ec2_bastion_role.json")
