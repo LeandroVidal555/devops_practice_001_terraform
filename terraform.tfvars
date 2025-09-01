@@ -1,7 +1,7 @@
 #### GENERAL ####
-aws_region    = "us-east-1"
-common_prefix = "dp-001"
-env           = "dev"
+aws_region          = "us-east-1"
+common_prefix       = "dp-001"
+env                 = "dev"
 admin_sso_role_hash = "e59d6194b0ea5059"
 
 #### VPC ####
