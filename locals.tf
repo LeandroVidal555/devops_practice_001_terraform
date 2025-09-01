@@ -17,8 +17,8 @@ locals {
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
     admin_roles = [
-      "aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",
-      "${var.env}-${var.common_prefix}-bastion-role"
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",
+      "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
     ]
   }
   bastion = {

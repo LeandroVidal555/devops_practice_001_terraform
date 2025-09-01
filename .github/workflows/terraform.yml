@@ -100,5 +100,11 @@ jobs:
         uses: actions/download-artifact@v4
         with: { name: tfplan }
 
+      - name: once 1
+        run: terraform state mv 'aws_eks_access_entry.admin_roles["role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_e59d6194b0ea5059"]' 'aws_eks_access_entry.admin_roles["arn:aws:iam::381443105190:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_e59d6194b0ea5059"]'
+
+      - name: once 2
+        run: terraform state mv 'aws_eks_access_policy_association.admin_roles_policies["role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_e59d6194b0ea5059"]' 'aws_eks_access_policy_association.admin_roles_policies["arn:aws:iam::381443105190:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_e59d6194b0ea5059"]'
+
       - name: Apply saved plan
         run: terraform apply -input=false -auto-approve tfplan
