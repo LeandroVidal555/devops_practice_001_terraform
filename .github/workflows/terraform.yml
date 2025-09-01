@@ -100,11 +100,5 @@ jobs:
         uses: actions/download-artifact@v4
         with: { name: tfplan }
 
-      - name: once 1
-        run: terraform state list | grep "aws_eks_access_entry.admin_roles"
-
-      - name: once 2
-        run: terraform state list | grep "aws_eks_access_policy_association.admin_roles_policies"
-
-      #- name: Apply saved plan
-      #  run: terraform apply -input=false -auto-approve tfplan
+      - name: Apply saved plan
+        run: terraform apply -input=false -auto-approve tfplan
