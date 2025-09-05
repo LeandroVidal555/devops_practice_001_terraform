@@ -42,6 +42,7 @@ module "eks" {
   }
 }
 
+
 resource "aws_eks_access_entry" "admin_roles" {
   for_each = toset(local.eks_cluster.admin_roles)
 
@@ -60,6 +61,7 @@ resource "aws_eks_access_policy_association" "admin_roles_policies" {
     type = "cluster"
   }
 }
+
 
 resource "aws_security_group_rule" "bastion_access" {
   type                     = "ingress"
