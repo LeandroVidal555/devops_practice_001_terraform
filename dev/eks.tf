@@ -87,3 +87,15 @@ resource "aws_security_group_rule" "bastion_access" {
   security_group_id        = module.eks.cluster_security_group_id
   source_security_group_id = module.ec2_bastion.security_group_id
 }
+
+resource "aws_security_group_rule" "github_access" {
+  type                     = "ingress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  description              = "Github Actions to EKS API"
+  security_group_id        = module.eks.cluster_security_group_id
+  cidr_blocks = [var.github_actions_egress_cidr]
+
+  count = var.enable_public_api ? 1 : 0
+}

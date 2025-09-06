@@ -119,7 +119,7 @@ jobs:
         run: terraform apply -input=false -auto-approve tfplan
 
       - name: Apply (only make eks private)
-        run: terraform apply -input=false -auto-approve -target=module.eks -var enable_public_api=false
+        run: terraform apply -input=false -auto-approve -target=module.eks -target=aws_security_group_rule.github_access -var enable_public_api=false
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
