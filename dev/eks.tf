@@ -15,13 +15,13 @@ module "eks" {
 
   # Core add-ons (latest)
   addons = {
-    coredns    = {
-      most_recent    = true
+    coredns = {
+      most_recent = true
     }
     kube-proxy = {
-      most_recent    = true
+      most_recent = true
     }
-    vpc-cni    = {
+    vpc-cni = {
       most_recent    = true
       before_compute = true
     }
