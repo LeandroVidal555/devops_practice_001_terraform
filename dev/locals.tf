@@ -6,7 +6,6 @@ locals {
     }
   }
   eks_cluster = {
-    endpoint_public_access  = false
     endpoint_private_access = true
     k8s_version             = "1.33"
     capacity_type           = "SPOT"

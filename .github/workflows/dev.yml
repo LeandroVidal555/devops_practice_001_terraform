@@ -54,6 +54,9 @@ jobs:
         with:
           terraform_version: 1.13.0
 
+      - name: Detect runner egress IP
+        run: echo "TF_VAR_github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
+
       - name: Init
         run: terraform init -input=false
 
@@ -64,7 +67,7 @@ jobs:
         run: terraform validate
 
       - name: Plan
-        run: terraform plan -input=false -out=tfplan
+        run: terraform plan -input=false -out=tfplan -var enable_public_api=true
 
       - name: Upload plan artifact
         uses: actions/upload-artifact@v4
@@ -112,8 +115,11 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}
 
-      - name: Apply saved plan
+      - name: Apply saved plan (public eks)
         run: terraform apply -input=false -auto-approve tfplan
+
+      - name: Apply (only make eks private)
+        run: terraform apply -input=false -auto-approve -target=module.eks -var enable_public_api=false
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.

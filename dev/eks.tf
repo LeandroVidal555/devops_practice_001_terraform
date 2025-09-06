@@ -5,8 +5,10 @@ module "eks" {
   name = "${var.env}-${var.common_prefix}-cluster"
 
   # Private API endpoint only
-  endpoint_public_access  = local.eks_cluster.endpoint_public_access
   endpoint_private_access = local.eks_cluster.endpoint_private_access
+
+  endpoint_public_access       = var.enable_public_api ? true : false
+  endpoint_public_access_cidrs = var.enable_public_api && var.github_actions_egress_cidr != null ? [var.github_actions_egress_cidr] : ["127.0.0.1/32"] # ignored when public access is false
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets # control plane ENIs + nodes in private subnets
@@ -33,9 +35,9 @@ module "eks" {
   eks_managed_node_groups = {
     workers = {
       timeouts = {
-        create = "15m" # default is 60m
-        update = "15m"
-        delete = "15m"
+        create = "10m" # default is 60m
+        update = "10m"
+        delete = "10m"
       }
 
       kubernetes_version = local.eks_cluster.k8s_version
