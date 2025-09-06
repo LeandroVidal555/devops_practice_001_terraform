@@ -15,9 +15,16 @@ module "eks" {
 
   # Core add-ons (latest)
   addons = {
-    coredns    = {}
-    kube-proxy = {}
-    vpc-cni    = {}
+    coredns    = {
+      most_recent    = true
+    }
+    kube-proxy = {
+      most_recent    = true
+    }
+    vpc-cni    = {
+      most_recent    = true
+      before_compute = true
+    }
   }
 
   # Let the creator be cluster admin
@@ -26,9 +33,9 @@ module "eks" {
   eks_managed_node_groups = {
     workers = {
       timeouts = {
-        create = "25m" # default is 60m
-        update = "25m"
-        delete = "25m"
+        create = "15m" # default is 60m
+        update = "15m"
+        delete = "15m"
       }
 
       kubernetes_version = local.eks_cluster.k8s_version
