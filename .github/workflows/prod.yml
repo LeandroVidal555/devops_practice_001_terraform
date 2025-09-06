@@ -72,6 +72,15 @@ jobs:
           name: tfplan
           path: ${{ env.TF_WORKING_DIR }}/tfplan
 
+      - name: Plan full output
+        run: terraform show -no-color tfplan > tfplan.txt
+
+      - name: Upload plan full output artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-plan
+          path: ${{ env.TF_WORKING_DIR }}/tfplan.txt
+
   apply:
     needs: plan
     if: ${{ vars.APPLY_TF_PROD == 'true' && vars.DESTROY_TF_PROD == 'false' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
