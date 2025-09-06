@@ -106,6 +106,9 @@ jobs:
         with:
           terraform_version: 1.13.0
 
+      - name: Detect runner egress IP
+        run: echo "TF_VAR_github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
+
       - name: Init
         run: terraform init -input=false
 
