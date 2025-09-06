@@ -25,6 +25,12 @@ module "eks" {
 
   eks_managed_node_groups = {
     workers = {
+      timeouts = {
+        create = "15m"   # default is longer; fail faster
+        update = "15m"
+        delete = "20m"
+      }
+
       kubernetes_version = local.eks_cluster.k8s_version
       capacity_type      = local.eks_cluster.capacity_type
       instance_types     = local.eks_cluster.instance_types
