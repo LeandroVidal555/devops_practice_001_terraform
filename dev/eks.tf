@@ -26,7 +26,7 @@ module "eks" {
   eks_managed_node_groups = {
     workers = {
       timeouts = {
-        create = "15m"   # default is longer; fail faster
+        create = "15m" # default is longer; fail faster
         update = "15m"
         delete = "20m"
       }
