@@ -26,9 +26,9 @@ module "eks" {
   eks_managed_node_groups = {
     workers = {
       timeouts = {
-        create = "15m" # default is longer; fail faster
-        update = "15m"
-        delete = "20m"
+        create = "25m" # default is 60m
+        update = "25m"
+        delete = "25m"
       }
 
       kubernetes_version = local.eks_cluster.k8s_version
