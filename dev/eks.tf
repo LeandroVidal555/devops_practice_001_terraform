@@ -32,12 +32,6 @@ module "eks" {
 
   # Let the creator be cluster admin
   enable_cluster_creator_admin_permissions = true
-
-  eks_managed_node_groups = {
-    workers = {
-
-    }
-  }
 }
 
 # Separate managed node group(s)

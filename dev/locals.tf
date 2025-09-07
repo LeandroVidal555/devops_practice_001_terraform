@@ -13,7 +13,7 @@ locals {
     desired_size            = 1
     min_size                = 0
     max_size                = 2
-    ami_type                = "AL2023_x86_64_STANDARD"
+    ami_type                = "AL2023_ARM_64_STANDARD"
     disk_size               = 20
     admin_roles = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",

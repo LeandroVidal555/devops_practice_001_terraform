@@ -1,4 +1,6 @@
 resource "helm_release" "argocd" {
+  depends_on = [module.mng_workers]
+  
   name             = "${var.env}-${var.common_prefix}"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
