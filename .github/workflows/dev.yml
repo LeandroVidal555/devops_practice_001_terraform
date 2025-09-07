@@ -68,12 +68,20 @@ jobs:
 
       ###### PLAN
       - name: Plan
+        id: plan
         run: terraform plan -input=false -out=tfplan -var enable_public_api=true
 
       - name: Plan full output
         run: terraform show -no-color tfplan > tfplan.txt
 
+      - name: Plan catch errors
+        if: ${{ failure() && steps.plan.outcome == 'failure' }}
+        run: |
+          set -o pipefail
+          terraform plan -no-color -input=false -var enable_public_api=true 2>&1 > tfplan.txt
+
       - name: Upload plan full output artifact
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
