@@ -18,9 +18,6 @@ module "eks" {
 
   # Core add-ons (latest)
   addons = {
-    coredns = {
-      most_recent = true
-    }
     kube-proxy = {
       most_recent = true
     }
@@ -62,9 +59,9 @@ module "mng_workers" {
   labels = { workload = "general_workers" }
 
   timeouts = {
-    create = "10m" # default is 60m
-    update = "10m"
-    delete = "10m"
+    create = "25m" # default is 60m
+    update = "15m"
+    delete = "15m"
   }
 }
 
