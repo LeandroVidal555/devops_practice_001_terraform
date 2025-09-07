@@ -8,7 +8,7 @@ module "eks" {
   endpoint_private_access = local.eks_cluster.endpoint_private_access
 
   endpoint_public_access       = var.enable_public_api ? true : false
-  endpoint_public_access_cidrs = var.enable_public_api && var.github_actions_egress_cidr != null ? [var.github_actions_egress_cidr] : ["127.0.0.1/32"] # ignored when public access is false
+  endpoint_public_access_cidrs = var.enable_public_api && var.github_actions_egress_cidr != null ? [var.github_actions_egress_cidr] : [] # ignored when public access is false
 
   vpc_id     = module.vpc.vpc_id
   subnet_ids = module.vpc.private_subnets # control plane ENIs + nodes in private subnets

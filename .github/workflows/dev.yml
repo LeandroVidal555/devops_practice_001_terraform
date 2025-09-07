@@ -113,7 +113,7 @@ jobs:
         run: terraform init -input=false
 
       - name: Make cluster public
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
