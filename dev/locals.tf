@@ -9,7 +9,7 @@ locals {
     endpoint_private_access = true
     k8s_version             = "1.33"
     capacity_type           = "SPOT"
-    instance_types          = ["t3a.small"]
+    instance_types          = ["t3a.medium"]
     desired_size            = 1
     min_size                = 0
     max_size                = 2
