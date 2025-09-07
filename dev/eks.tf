@@ -32,7 +32,7 @@ module "eks" {
 }
 
 # IAM role that EC2 instances in the node group will assume
-resource "aws_iam_role" "worker_node_role" {
+resource "aws_iam_role" "worker_nodes_role" {
   name = "${var.env}-${var.common_prefix}-worker-node-role"
 
   assume_role_policy = jsonencode({
@@ -50,20 +50,22 @@ resource "aws_iam_role" "worker_node_role" {
 }
 
 # Attach the three managed policies required for EKS nodes
-resource "aws_iam_role_policy_attachment" "worker_node_policies" {
+resource "aws_iam_role_policy_attachment" "worker_nodes_policies" {
   for_each = toset([
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
   ])
 
-  role       = aws_iam_role.worker_node_role.name
+  role       = aws_iam_role.worker_nodes_role.name
   policy_arn = each.key
 }
 
 
 # Separate managed node group(s)
 module "mng_workers" {
+  depends_on = [aws_eks_access_entry.worker_nodes]
+
   source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
   version = "21.1.5"
 
@@ -75,7 +77,7 @@ module "mng_workers" {
   subnet_ids           = module.vpc.private_subnets
 
   create_iam_role = false
-  iam_role_arn    = aws_iam_role.worker_node_role.arn
+  iam_role_arn    = aws_iam_role.worker_nodes_role.arn
 
   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
   vpc_security_group_ids            = [module.eks.node_security_group_id]
@@ -92,11 +94,11 @@ module "mng_workers" {
 
   labels = { workload = "general_workers" }
 
-  timeouts = {
-    create = "25m" # default is 60m
-    update = "15m"
-    delete = "15m"
-  }
+  #timeouts = {
+  #  create = "25m" # default is 60m
+  #  update = "15m"
+  #  delete = "15m"
+  #}
 }
 
 resource "aws_eks_addon" "coredns" {

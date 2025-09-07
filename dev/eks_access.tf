@@ -18,10 +18,12 @@ resource "aws_eks_access_policy_association" "admin_roles_policies" {
   }
 }
 
-resource "aws_eks_access_entry" "node_roles" {
-  cluster_name      = module.eks.cluster_name
-  principal_arn     = aws_iam_role.worker_node_role.arn
-  kubernetes_groups = ["system:bootstrappers", "system:nodes"]
+resource "aws_eks_access_entry" "worker_nodes" {
+  depends_on = [aws_iam_role.worker_nodes_role]
+
+  cluster_name  = module.eks.cluster_name
+  principal_arn = aws_iam_role.worker_nodes_role.arn
+  type          = "EC2_LINUX"
 }
 
 
