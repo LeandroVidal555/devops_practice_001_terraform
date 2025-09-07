@@ -46,6 +46,9 @@ module "mng_workers" {
   cluster_service_cidr = module.eks.cluster_service_cidr
   subnet_ids           = module.vpc.private_subnets
 
+  cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
+  vpc_security_group_ids            = [module.eks.node_security_group_id]
+
   capacity_type  = local.eks_cluster.capacity_type
   instance_types = local.eks_cluster.instance_types
 
