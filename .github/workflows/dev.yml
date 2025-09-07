@@ -78,7 +78,7 @@ jobs:
         if: ${{ failure() && steps.plan.outcome == 'failure' }}
         run: |
           set -o pipefail
-          terraform plan -no-color -input=false -var enable_public_api=true 2>&1 > tfplan.txt
+          terraform plan -no-color -input=false -var enable_public_api=true 2>&1 | tee tfplan.txt
 
       - name: Upload plan full output artifact
         if: ${{ always() }}
