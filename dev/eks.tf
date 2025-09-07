@@ -31,6 +31,37 @@ module "eks" {
   enable_cluster_creator_admin_permissions = true
 }
 
+# IAM role that EC2 instances in the node group will assume
+resource "aws_iam_role" "worker_node_role" {
+  name = "${var.env}-${var.common_prefix}-worker-node-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# Attach the three managed policies required for EKS nodes
+resource "aws_iam_role_policy_attachment" "worker_node_policies" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+  ])
+
+  role       = aws_iam_role.worker_node_role.name
+  policy_arn = each.key
+}
+
+
 # Separate managed node group(s)
 module "mng_workers" {
   source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
@@ -42,6 +73,9 @@ module "mng_workers" {
   cluster_name         = module.eks.cluster_name
   cluster_service_cidr = module.eks.cluster_service_cidr
   subnet_ids           = module.vpc.private_subnets
+
+  create_iam_role = false
+  iam_role_arn    = aws_iam_role.worker_node_role.arn
 
   cluster_primary_security_group_id = module.eks.cluster_primary_security_group_id
   vpc_security_group_ids            = [module.eks.node_security_group_id]
@@ -69,47 +103,4 @@ resource "aws_eks_addon" "coredns" {
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
   depends_on   = [module.mng_workers] # ensure nodes exist first
-}
-
-
-resource "aws_eks_access_entry" "admin_roles" {
-  for_each = toset(local.eks_cluster.admin_roles)
-
-  cluster_name  = module.eks.cluster_name
-  principal_arn = each.key
-}
-
-resource "aws_eks_access_policy_association" "admin_roles_policies" {
-  for_each = aws_eks_access_entry.admin_roles
-
-  cluster_name  = module.eks.cluster_name
-  principal_arn = each.value.principal_arn
-  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
-
-  access_scope {
-    type = "cluster"
-  }
-}
-
-
-resource "aws_security_group_rule" "bastion_access" {
-  type                     = "ingress"
-  from_port                = 443
-  to_port                  = 443
-  protocol                 = "tcp"
-  description              = "Bastion to EKS API"
-  security_group_id        = module.eks.cluster_security_group_id
-  source_security_group_id = module.ec2_bastion.security_group_id
-}
-
-resource "aws_security_group_rule" "github_access" {
-  type              = "ingress"
-  from_port         = 443
-  to_port           = 443
-  protocol          = "tcp"
-  description       = "Github Actions to EKS API"
-  security_group_id = module.eks.cluster_security_group_id
-  cidr_blocks       = [var.github_actions_egress_cidr]
-
-  count = var.enable_public_api ? 1 : 0
 }
