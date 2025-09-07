@@ -12,5 +12,11 @@ variable "isolated_subnet_cidrs" { type = list(string) }
 #### EKS ####
 variable "admin_sso_role_hash" { type = string }
 variable "argocd_chart_version" { type = string }
-variable "enable_public_api" { type = bool }
-variable "github_actions_egress_cidr" { type = string } # introduced by github actions workflow as envvar
+variable "enable_public_api" {
+    type = bool
+    default = false
+}
+variable "github_actions_egress_cidr" { # introduced by github actions workflow as envvar
+    type = string 
+    default = null
+}

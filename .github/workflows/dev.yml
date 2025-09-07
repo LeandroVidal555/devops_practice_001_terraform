@@ -86,7 +86,7 @@ jobs:
 
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=module.eks -target=aws_security_group_rule.github_access -var enable_public_api=false
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
@@ -111,6 +111,9 @@ jobs:
 
       - name: Init
         run: terraform init -input=false
+
+      - name: Make cluster public
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
