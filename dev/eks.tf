@@ -49,6 +49,7 @@ module "mng_workers" {
   kubernetes_version = local.eks_cluster.cluster_version
 
   cluster_name = module.eks.cluster_name
+  cluster_service_cidr = module.eks.cluster_service_cidr
   subnet_ids   = module.vpc.private_subnets
 
   capacity_type  = local.eks_cluster.capacity_type
