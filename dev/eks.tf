@@ -2,7 +2,8 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "21.1.5"
 
-  name = "${var.env}-${var.common_prefix}-cluster"
+  name               = "${var.env}-${var.common_prefix}-cluster"
+  kubernetes_version = local.eks_cluster.cluster_version
 
   # Private API endpoint only
   endpoint_private_access = local.eks_cluster.endpoint_private_access
@@ -34,26 +35,38 @@ module "eks" {
 
   eks_managed_node_groups = {
     workers = {
-      timeouts = {
-        create = "10m" # default is 60m
-        update = "10m"
-        delete = "10m"
-      }
 
-      kubernetes_version = local.eks_cluster.k8s_version
-      capacity_type      = local.eks_cluster.capacity_type
-      instance_types     = local.eks_cluster.instance_types
-
-      min_size     = local.eks_cluster.min_size
-      desired_size = local.eks_cluster.desired_size
-      max_size     = local.eks_cluster.max_size
-
-      ami_type  = local.eks_cluster.ami_type
-      disk_size = local.eks_cluster.disk_size
-
-      subnet_ids = module.vpc.private_subnets
-      labels     = { workload = "general_workers" }
     }
+  }
+}
+
+# Separate managed node group(s)
+module "mng_workers" {
+  source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
+  version = "21.1.5"
+
+  name               = "workers"
+  kubernetes_version = local.eks_cluster.cluster_version
+
+  cluster_name = module.eks.cluster_name
+  subnet_ids   = module.vpc.private_subnets
+
+  capacity_type  = local.eks_cluster.capacity_type
+  instance_types = local.eks_cluster.instance_types
+
+  min_size     = local.eks_cluster.min_size
+  desired_size = local.eks_cluster.desired_size
+  max_size     = local.eks_cluster.max_size
+
+  ami_type  = local.eks_cluster.ami_type
+  disk_size = local.eks_cluster.disk_size
+
+  labels = { workload = "general_workers" }
+
+  timeouts = {
+    create = "10m" # default is 60m
+    update = "10m"
+    delete = "10m"
   }
 }
 

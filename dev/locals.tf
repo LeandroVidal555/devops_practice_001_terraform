@@ -7,7 +7,7 @@ locals {
   }
   eks_cluster = {
     endpoint_private_access = true
-    k8s_version             = "1.33"
+    cluster_version         = "1.33"
     capacity_type           = "SPOT"
     instance_types          = ["t4g.medium"]
     desired_size            = 1
