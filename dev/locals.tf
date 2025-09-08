@@ -20,8 +20,8 @@ locals {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
     ]
     public_cidrs = compact([
-      var.github_actions_egress_cidr,                 # you already have this
-      "${data.aws_nat_gateway.this.public_ip}/32",    # add NAT EIP
+      var.github_actions_egress_cidr,              # you already have this
+      "${data.aws_nat_gateway.this.public_ip}/32", # add NAT EIP
     ])
   }
   bastion = {
