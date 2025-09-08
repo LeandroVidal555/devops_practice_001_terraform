@@ -120,11 +120,9 @@ jobs:
       - name: Set rerun flag
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          NAME: RERUN_TF_DEV
-          VALUE: "true"
-        run: gh api -X PATCH "/repos/$REPO/actions/variables/$NAME" -f name="$NAME" -f value="$VALUE"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: gh variable set RERUN_TF_DEV --body "true"
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
@@ -150,21 +148,18 @@ jobs:
       - name: Init
         run: terraform init -input=false
 
-      - name: Make cluster public
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
+      #- name: Make cluster public
+      #  run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
 
-      - name: Remove ArgoCD finalizer
-        run: |
-          aws eks update-kubeconfig --name dev-dp-001-cluster --region us-east-1
-          kubectl -n argocd patch application root-app -p '{"metadata":{"finalizers":[]}}' --type=merge || true
+      #- name: Remove ArgoCD finalizer
+      #  run: |
+      #    aws eks update-kubeconfig --name dev-dp-001-cluster --region us-east-1
+      #    kubectl -n argocd patch application root-app -p '{"metadata":{"finalizers":[]}}' --type=merge || true
 
-      - name: Destroy Infrastructure
-        run: terraform destroy -input=false -auto-approve
+      #- name: Destroy Infrastructure
+      #  run: terraform destroy -input=false -auto-approve
         
       - name: Reset rerun flag
         env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          NAME: RERUN_TF_DEV
-          VALUE: "false"
-        run: gh api -X PATCH "/repos/$REPO/actions/variables/$NAME" -f name="$NAME" -f value="$VALUE"
+          GITHUB_TOKEN: ${{ github.token }}
+        run: gh variable set RERUN_TF_DEV --body "false"
