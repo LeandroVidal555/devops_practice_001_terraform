@@ -120,7 +120,6 @@ jobs:
       - name: Set rerun flag
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         env:
-        env:
           GITHUB_TOKEN: ${{ github.token }}
         run: gh variable set RERUN_TF_DEV --body "true"
 
