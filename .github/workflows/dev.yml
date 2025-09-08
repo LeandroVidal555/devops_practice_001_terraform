@@ -152,6 +152,11 @@ jobs:
       - name: Make cluster public
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
 
+      - name: Remove ArgoCD finalizer
+        run: |
+          aws eks update-kubeconfig --name dev-dp-001-cluster --region us-east-1
+          kubectl -n argocd patch application root-app -p '{"metadata":{"finalizers":[]}}' --type=merge || true
+
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
         
