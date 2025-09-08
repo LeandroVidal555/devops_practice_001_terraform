@@ -60,3 +60,13 @@ resource "kubernetes_manifest" "argocd_root_app" {
     })
   )
 }
+
+# This lets us avoid the finalizer glitch that prevents tf from deleting the root app
+resource "null_resource" "remove_root_app_finalizer" {
+  depends_on = [kubernetes_manifest.argocd_root_app]
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl -n argocd patch application root-app -p '{\"metadata\":{\"finalizers\":[]}}' --type=merge || true"
+  }
+}
