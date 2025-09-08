@@ -20,3 +20,7 @@ variable "github_actions_egress_cidr" { # introduced by github actions workflow 
   type    = string
   default = null
 }
+variable "deploy_apps" {
+  type    = bool
+  default = false
+}
