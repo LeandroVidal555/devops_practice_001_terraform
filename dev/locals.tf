@@ -20,8 +20,13 @@ locals {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
     ]
   }
+  argocd = {
+    repo_org  = "LeandroVidal555"
+    repo_name = "devops_practice_001_kubernetes"
+    apps_path = "${var.env}/apps"
+  }
   bastion = {
-    instance_type  = "t3a.micro"
+    instance_type  = "t4g.micro"
     subnet_id      = module.vpc.private_subnets[0]
     user_data_file = file("${path.module}/resources/user_data_bastion.sh")
     policy_file    = file("${path.module}/resources/ec2_bastion_role.json")

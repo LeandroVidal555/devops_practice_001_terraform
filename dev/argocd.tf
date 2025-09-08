@@ -48,3 +48,20 @@ resource "helm_release" "argocd" {
     })
   ]
 }
+
+resource "time_sleep" "after_argocd" { # avoiding race conditions
+  depends_on      = [helm_release.argocd]
+  create_duration = "20s"
+}
+
+resource "kubernetes_manifest" "argocd_root_app" {
+  depends_on = [time_sleep.after_argocd]
+
+  manifest = yamldecode(
+    templatefile("${path.module}/resources/argocd_root_app.yml.tpl", {
+      repo_org  = local.argocd.repo_org
+      repo_name = local.argocd.repo_name
+      apps_path = local.argocd.apps_path
+    })
+  )
+}

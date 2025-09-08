@@ -25,9 +25,13 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.10.0"
     }
-    helm = {
+    helm = { # for ArgoCD
       source  = "hashicorp/helm"
       version = ">= 3.0.2"
+    }
+    kubernetes = { # for app of apps in ArgoCD
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.38.0"
     }
   }
 }
