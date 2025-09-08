@@ -115,6 +115,15 @@ jobs:
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false -var deploy_apps=true
+        
+      - name: Set rerun flag
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NAME: RERUN_TF_DEV
+          VALUE: "true"
+        run: gh api -X PATCH "/repos/$REPO/actions/variables/$NAME" -f name="$NAME" -f value="$VALUE"
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
@@ -145,3 +154,11 @@ jobs:
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
+        
+      - name: Reset rerun flag
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NAME: RERUN_TF_DEV
+          VALUE: "false"
+        run: gh api -X PATCH "/repos/$REPO/actions/variables/$NAME" -f name="$NAME" -f value="$VALUE"
