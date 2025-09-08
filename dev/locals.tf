@@ -19,6 +19,10 @@ locals {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
     ]
+    public_cidrs = compact([
+      var.github_actions_egress_cidr,                 # you already have this
+      "${data.aws_nat_gateway.this.public_ip}/32",    # add NAT EIP
+    ])
   }
   bastion = {
     instance_type  = "t3a.micro"
