@@ -67,6 +67,10 @@ jobs:
         run: terraform validate
 
       ###### PLAN
+      - name: Apply (just make eks public)
+        if: ${{ vars.RERUN_TF_DEV == 'true' }}
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true -var deploy_apps=true
+      
       - name: Plan
         id: plan
         run: terraform plan -input=false -out=tfplan -var enable_public_api=true
