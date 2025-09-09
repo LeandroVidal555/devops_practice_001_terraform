@@ -161,4 +161,4 @@ jobs:
       - name: Reset rerun flag
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: gh variable set RERUN_TF_DEV --body "false"
+        run: gh variable set RERUN_TF_DEV --body "false" --repo "${{ github.repository }}"
