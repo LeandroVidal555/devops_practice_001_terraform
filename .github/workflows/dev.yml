@@ -120,8 +120,8 @@ jobs:
       - name: Set rerun flag
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-        run: gh variable set RERUN_TF_DEV --body "true"
+          GH_TOKEN: ${{ secrets.TF_GA_PAT }}
+        run: gh variable set RERUN_TF_DEV --body "true" --repo "${{ github.repository }}"
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
