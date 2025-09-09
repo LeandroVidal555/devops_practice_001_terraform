@@ -23,7 +23,6 @@ permissions:
   id-token: write
   actions: write   # required to manage Actions variables
   contents: read
-  repository: read
 
 jobs:
   apply:
