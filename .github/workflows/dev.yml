@@ -159,6 +159,9 @@ jobs:
       #  run: terraform destroy -input=false -auto-approve
         
       - name: Reset rerun flag
+        permissions:
+          actions: write
+          contents: read
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: gh variable set RERUN_TF_DEV --body "false" --repo "${{ github.repository }}"
