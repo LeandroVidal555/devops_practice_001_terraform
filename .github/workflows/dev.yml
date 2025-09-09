@@ -23,6 +23,7 @@ permissions:
   id-token: write
   actions: write   # required to manage Actions variables
   contents: read
+  actions_variables: write
 
 jobs:
   apply:
