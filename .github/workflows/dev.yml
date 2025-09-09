@@ -20,7 +20,6 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  variables: write
   id-token: write
   actions: write   # required to manage Actions variables
   contents: read
@@ -161,5 +160,5 @@ jobs:
         
       - name: Reset rerun flag
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: gh variable set RERUN_TF_DEV --body "false" --repo "${{ github.repository }}"
