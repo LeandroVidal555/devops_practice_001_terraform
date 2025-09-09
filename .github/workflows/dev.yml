@@ -20,6 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
+  variables: write
   id-token: write
   actions: write   # required to manage Actions variables
   contents: read
@@ -159,9 +160,6 @@ jobs:
       #  run: terraform destroy -input=false -auto-approve
         
       - name: Reset rerun flag
-        permissions:
-          actions: write
-          contents: read
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: gh variable set RERUN_TF_DEV --body "false" --repo "${{ github.repository }}"
