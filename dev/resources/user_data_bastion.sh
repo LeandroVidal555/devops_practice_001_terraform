@@ -2,8 +2,10 @@
 set -euo pipefail
 dnf -y update
 
-# kubectl
-curl -L -o /usr/local/bin/kubectl https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl
+KARCH=arm64
+VER="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
+
+curl -fsSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/${VER}/bin/linux/${KARCH}/kubectl"
 chmod +x /usr/local/bin/kubectl
 
 # Quality of life
