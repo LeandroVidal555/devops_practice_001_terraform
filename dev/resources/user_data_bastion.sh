@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "###### STARTING USER DATA RUN $(date)"
+echo "###### STARTING USER DATA RUN $(date)..."
 set -euo pipefail
 dnf -y update
 
