@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "###### STARTING USER DATA RUN $(date)"
 set -euo pipefail
 dnf -y update
 
@@ -10,3 +11,4 @@ chmod +x /usr/local/bin/kubectl
 
 # Quality of life
 echo 'complete -C /usr/local/bin/kubectl kubectl' >> /etc/profile.d/kubectl.sh
+echo "###### ENDED USER DATA RUN $(date)"
