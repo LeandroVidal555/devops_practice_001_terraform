@@ -26,10 +26,10 @@ locals {
     apps_path = "${var.env}/apps"
   }
   bastion = {
-    instance_type  = "t4g.micro"
-    subnet_id      = module.vpc.private_subnets[0]
-    user_data_file = file("${path.module}/resources/user_data_bastion.sh")
+    instance_type               = "t4g.micro"
+    subnet_id                   = module.vpc.private_subnets[0]
+    user_data_file              = file("${path.module}/resources/user_data_bastion.sh")
     user_data_replace_on_change = true
-    policy_file    = file("${path.module}/resources/ec2_bastion_role.json")
+    policy_file                 = file("${path.module}/resources/ec2_bastion_role.json")
   }
 }

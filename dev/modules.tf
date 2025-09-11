@@ -11,11 +11,11 @@ module "ecr" {
 module "ec2_bastion" {
   source = "./ec2_bastion"
 
-  name           = "${var.env}-${var.common_prefix}-bastion"
-  instance_type  = local.bastion.instance_type
-  subnet_id      = local.bastion.subnet_id
-  user_data_file = local.bastion.user_data_file
+  name                        = "${var.env}-${var.common_prefix}-bastion"
+  instance_type               = local.bastion.instance_type
+  subnet_id                   = local.bastion.subnet_id
+  user_data_file              = local.bastion.user_data_file
   user_data_replace_on_change = local.bastion.user_data_replace_on_change
-  policy_file    = local.bastion.policy_file
-  vpc_id         = module.vpc.vpc_id
+  policy_file                 = local.bastion.policy_file
+  vpc_id                      = module.vpc.vpc_id
 }
