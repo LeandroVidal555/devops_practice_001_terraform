@@ -3,6 +3,7 @@ module "ecr" {
   source   = "./ecr"
 
   repo_name            = "${var.common_prefix}-${each.key}"
+  force_delete         = each.value.force_delete
   image_tag_mutability = each.value.image_tag_mutability
   scan_on_push         = each.value.scan_on_push
 

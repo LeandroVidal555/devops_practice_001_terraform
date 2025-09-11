@@ -1,6 +1,7 @@
 locals {
   ecr_repos = {
     "app" = {
+      force_delete         = true
       image_tag_mutability = "MUTABLE"
       scan_on_push         = false
     }
