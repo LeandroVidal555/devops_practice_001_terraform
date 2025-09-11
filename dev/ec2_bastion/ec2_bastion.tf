@@ -18,7 +18,13 @@ resource "aws_instance" "this" {
   vpc_security_group_ids      = [aws_security_group.this.id]
   iam_instance_profile        = aws_iam_instance_profile.this_profile.name
   associate_public_ip_address = true
+
   user_data                   = var.user_data_file
+  user_data_replace_on_change = true
+
+  lifecycle {
+    create_before_destroy = true
+  }
 
   tags = { Name = var.name }
 }
