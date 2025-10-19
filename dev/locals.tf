@@ -7,6 +7,7 @@ locals {
     }
   }
   eks_cluster = {
+    name                    = "${var.env}-${var.common_prefix}-cluster"
     endpoint_private_access = true
     cluster_version         = "1.33"
     capacity_type           = "SPOT"

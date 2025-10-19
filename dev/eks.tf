@@ -2,7 +2,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "21.1.5"
 
-  name               = "${var.env}-${var.common_prefix}-cluster"
+  name               = local.eks_cluster.name
   kubernetes_version = local.eks_cluster.cluster_version
 
   # Private API endpoint only
