@@ -19,8 +19,6 @@ resource "aws_iam_policy" "alb_controller" {
 }
 
 # --- IRSA role for the controller SA ---
-data "aws_caller_identity" "current" {}
-
 resource "aws_iam_role" "alb_controller" {
   name = "${local.eks_cluster.name}-ALB_Controller"
 
@@ -61,24 +59,24 @@ resource "helm_release" "aws_load_balancer_controller" {
   # Let Helm create the SA and annotate it with the IRSA role
   set = [
     {
-        name  = "serviceAccount.create"
-        value = "true"
+      name  = "serviceAccount.create"
+      value = "true"
     },
     {
-        name  = "serviceAccount.name"
-        value = "aws-load-balancer-controller"
+      name  = "serviceAccount.name"
+      value = "aws-load-balancer-controller"
     },
     {
-        name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-        value = aws_iam_role.alb_controller.arn
+      name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      value = aws_iam_role.alb_controller.arn
     },
     {
-        name  = "clusterName"
-        value = local.eks_cluster.name
+      name  = "clusterName"
+      value = local.eks_cluster.name
     },
     {
-        name  = "region"
-        value = var.aws_region
+      name  = "region"
+      value = var.aws_region
     }
   ]
 
