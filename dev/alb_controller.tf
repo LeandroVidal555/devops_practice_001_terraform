@@ -1,7 +1,3 @@
-data "tls_certificate" "oidc_thumbprint" {
-  url = module.eks.cluster_oidc_issuer_url
-}
-
 data "http" "alb_controller_policy" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
 }
@@ -42,7 +38,6 @@ resource "aws_iam_role_policy_attachment" "alb_attach" {
   policy_arn = aws_iam_policy.alb_controller.arn
 }
 
-# --- Helm chart install ---
 resource "helm_release" "aws_load_balancer_controller" {
   name       = "${var.env}-${var.common_prefix}-albcont"
   repository = "https://aws.github.io/eks-charts"
