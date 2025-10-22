@@ -45,6 +45,13 @@ resource "helm_release" "aws_load_balancer_controller" {
   version    = var.albcont_chart_version
   namespace  = "kube-system"
 
+  # Robust deployments
+  atomic = true
+  cleanup_on_fail = true
+  dependency_update = true
+  wait = true
+  #replace = true
+
   # Let Helm create the SA and annotate it with the IRSA role
   set = [
     {

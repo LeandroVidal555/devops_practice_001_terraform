@@ -9,6 +9,13 @@ resource "helm_release" "argocd" {
   create_namespace = true
   timeout          = 600
 
+  # Robust deployments
+  atomic = true
+  cleanup_on_fail = true
+  dependency_update = true
+  wait = true
+  #replace = true
+
   # Safe defaults for a private cluster:
   values = [
     yamlencode({
