@@ -1,9 +1,9 @@
 data "tls_certificate" "oidc_thumbprint" {
-  url = local.eks_cluster.oidc_issuer_url
+  url = module.eks.cluster_oidc_issuer_url
 }
 
 resource "aws_iam_openid_connect_provider" "eks" {
-  url             = local.eks_cluster.oidc_issuer_url
+  url             = module.eks.cluster_oidc_issuer_url
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
 }
@@ -34,8 +34,8 @@ resource "aws_iam_role" "alb_controller" {
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringEquals = {
-            "${local.eks_cluster.oidc_issuer_url_nossl}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
-            "${local.eks_cluster.oidc_issuer_url_nossl}:aud" = "sts.amazonaws.com"
+            "${replace(local.eks_cluster.oidc_issuer_url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
+            "${replace(local.eks_cluster.oidc_issuer_url, "https://", "")}:aud" = "sts.amazonaws.com"
           }
         }
       }
