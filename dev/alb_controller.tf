@@ -2,12 +2,6 @@ data "tls_certificate" "oidc_thumbprint" {
   url = module.eks.cluster_oidc_issuer_url
 }
 
-resource "aws_iam_openid_connect_provider" "eks" {
-  url             = module.eks.cluster_oidc_issuer_url
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint]
-}
-
 data "http" "alb_controller_policy" {
   url = "https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/main/docs/install/iam_policy.json"
 }
@@ -29,13 +23,13 @@ resource "aws_iam_role" "alb_controller" {
         Sid    = ""
         Effect = "Allow"
         Principal = {
-          Federated = aws_iam_openid_connect_provider.eks.arn
+          Federated = module.eks.oidc_provider_arn
         }
         Action = "sts:AssumeRoleWithWebIdentity"
         Condition = {
           StringEquals = {
-            "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
-            "${replace(module.eks.cluster_oidc_issuer_url, "https://", "")}:aud" = "sts.amazonaws.com"
+            "${module.eks.oidc_provider}:sub" = "system:serviceaccount:kube-system:aws-load-balancer-controller"
+            "${module.eks.oidc_provider}:aud" = "sts.amazonaws.com"
           }
         }
       }
