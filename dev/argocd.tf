@@ -1,12 +1,20 @@
+resource "kubernetes_namespace_v1" "argocd" {
+  metadata { name = "argocd" }
+}
+
 resource "helm_release" "argocd" {
-  depends_on = [module.mng_workers]
+  depends_on = [
+    module.mng_workers,
+    kubernetes_namespace_v1.argocd,
+    helm_release.aws_load_balancer_controller # avoid race condition
+  ]
 
   name             = "${var.env}-${var.common_prefix}-argocd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   version          = var.argocd_chart_version
   namespace        = "argocd"
-  create_namespace = true
+  create_namespace = false
   timeout          = 600
 
   # Robust deployments
