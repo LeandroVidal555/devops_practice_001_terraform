@@ -10,10 +10,10 @@ resource "helm_release" "argocd" {
   timeout          = 600
 
   # Robust deployments
-  atomic = true
-  cleanup_on_fail = true
+  atomic            = true
+  cleanup_on_fail   = true
   dependency_update = true
-  wait = true
+  wait              = true
   #replace = true
 
   # Safe defaults for a private cluster:
