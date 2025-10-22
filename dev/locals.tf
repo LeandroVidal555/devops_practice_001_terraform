@@ -9,7 +9,7 @@ locals {
   eks_cluster = {
     name                    = "${var.env}-${var.common_prefix}-cluster"
     endpoint_private_access = true
-    cluster_version         = "1.33"
+    cluster_version         = var.cluster_version
     capacity_type           = "SPOT"
     instance_types          = ["t3a.medium"]
     desired_size            = 1
@@ -21,6 +21,8 @@ locals {
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
     ]
+    oidc_issuer_url         = module.eks.cluster_oidc_issuer_url
+    oidc_issuer_url_nossl = replace(local.eks_cluster.oidc_issuer_url, "https://", "")
   }
   argocd = {
     repo_org  = "LeandroVidal555"

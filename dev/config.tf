@@ -23,7 +23,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 6.10.0"
+      version = "~> 6.17.0"
     }
     helm = { # for ArgoCD
       source  = "hashicorp/helm"
@@ -32,6 +32,14 @@ terraform {
     kubernetes = { # for app of apps in ArgoCD
       source  = "hashicorp/kubernetes"
       version = ">= 2.38.0"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = ">= 4.1.0"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = ">= 3.5.0"
     }
   }
 }

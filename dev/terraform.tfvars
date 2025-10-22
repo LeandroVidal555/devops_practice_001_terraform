@@ -1,9 +1,11 @@
 #### GENERAL ####
-aws_region           = "us-east-1"
-common_prefix        = "dp-001"
-env                  = "dev"
-admin_sso_role_hash  = "e59d6194b0ea5059"
-argocd_chart_version = "8.3.4"
+aws_region            = "us-east-1"
+common_prefix         = "dp-001"
+env                   = "dev"
+cluster_version       = "1.33"
+admin_sso_role_hash   = "e59d6194b0ea5059"
+argocd_chart_version  = "8.3.4"
+albcont_chart_version = "2.14.1"
 
 #### VPC ####
 vpc_cidr              = "10.0.0.0/16"

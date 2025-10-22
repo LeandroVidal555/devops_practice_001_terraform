@@ -1,7 +1,7 @@
 resource "helm_release" "argocd" {
   depends_on = [module.mng_workers]
 
-  name             = "${var.env}-${var.common_prefix}"
+  name             = "${var.env}-${var.common_prefix}-argocd"
   repository       = "https://argoproj.github.io/argo-helm"
   chart            = "argo-cd"
   version          = var.argocd_chart_version
@@ -54,6 +54,7 @@ resource "kubernetes_manifest" "argocd_root_app" {
 
   manifest = yamldecode(
     templatefile("${path.module}/resources/argocd_root_app.yml.tpl", {
+      env       = var.env
       repo_org  = local.argocd.repo_org
       repo_name = local.argocd.repo_name
       apps_path = local.argocd.apps_path

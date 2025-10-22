@@ -10,8 +10,10 @@ variable "public_subnet_cidrs" { type = list(string) }
 variable "isolated_subnet_cidrs" { type = list(string) }
 
 #### EKS ####
+variable "cluster_version" { type = string }
 variable "admin_sso_role_hash" { type = string }
 variable "argocd_chart_version" { type = string }
+variable "albcont_chart_version" { type = string }
 variable "enable_public_api" {
   type    = bool
   default = false
