@@ -11,7 +11,7 @@ locals {
     endpoint_private_access = true
     cluster_version         = var.cluster_version
     capacity_type           = "SPOT"
-    instance_types          = ["t3a.medium", "m7a.medium", "t3.medium"]
+    instance_types          = ["t3a.medium", "t3.medium"]
     desired_size            = 1
     min_size                = 0
     max_size                = 2
