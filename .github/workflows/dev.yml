@@ -164,7 +164,7 @@ jobs:
         if: steps.eks.outputs.status == 'DEPLOYED'
         run: |
           aws eks update-kubeconfig --name dev-dp-001-cluster --region us-east-1
-          kubectl -n argocd patch application root-app -p '{"metadata":{"finalizers":[]}}' --type=merge || true
+          kubectl -n argocd patch application root-app-dev -p '{"metadata":{"finalizers":[]}}' --type=merge || true
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
