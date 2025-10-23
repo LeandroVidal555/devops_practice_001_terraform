@@ -68,8 +68,17 @@ jobs:
         run: terraform validate
 
       ###### PLAN
-      - name: Plan Rerun (just make eks public)
-        if: ${{ vars.APPLY_RERUN_TF_DEV == 'true' }}
+      - name: Check EKS cluster
+        id: eks_status
+        shell: bash
+        run: |
+          set -euo pipefail
+          if aws eks describe-cluster --name dev-dp-001-cluster --region us-east-1 > /dev/null 2>&1; then
+            echo "status=DEPLOYED" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Make EKS cluster public
+        if: steps.eks_status.outputs.status == 'DEPLOYED'
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
       
       - name: Plan
@@ -104,12 +113,6 @@ jobs:
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false -var deploy_apps=true
-        
-      - name: Set rerun flag
-        if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        env:
-          GH_TOKEN: ${{ secrets.TF_GA_PAT }}
-        run: gh variable set APPLY_RERUN_TF_DEV --body "true" --repo "${{ github.repository }}"
 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
@@ -136,7 +139,7 @@ jobs:
         run: terraform init -input=false
 
       - name: Check EKS cluster
-        id: eks
+        id: eks_status
         shell: bash
         run: |
           set -euo pipefail
@@ -144,20 +147,15 @@ jobs:
             echo "status=DEPLOYED" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Make cluster public
-        if: steps.eks.outputs.status == 'DEPLOYED'
+      - name: Make EKS cluster public
+        if: steps.eks_status.outputs.status == 'DEPLOYED'
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
 
       - name: Remove ArgoCD finalizer
-        if: steps.eks.outputs.status == 'DEPLOYED'
+        if: steps.eks_status.outputs.status == 'DEPLOYED'
         run: |
           aws eks update-kubeconfig --name dev-dp-001-cluster --region us-east-1
           kubectl -n argocd patch application root-app-dev -p '{"metadata":{"finalizers":[]}}' --type=merge || true
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
-
-      - name: Reset rerun flag
-        env:
-          GH_TOKEN: ${{ secrets.TF_GA_PAT }}
-        run: gh variable set APPLY_RERUN_TF_DEV --body "false" --repo "${{ github.repository }}"
