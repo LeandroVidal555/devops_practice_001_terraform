@@ -70,11 +70,16 @@ jobs:
       ###### PLAN
       - name: Plan Rerun 1 (just make eks public)
         if: ${{ vars.RERUN_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true -var deploy_apps=true
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true -var deploy_apps=false
       
       - name: Plan Rerun 2
         if: ${{ vars.RERUN_TF_DEV == 'true' }}
-        id: plan_rerun
+        id: plan_rerun_2
+        run: terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_apps=false
+      
+      - name: Plan Rerun 3
+        if: ${{ vars.RERUN_TF_DEV == 'true' }}
+        id: plan_rerun_3
         run: terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_apps=true
       
       - name: Plan
@@ -86,7 +91,7 @@ jobs:
         run: terraform show -no-color tfplan > tfplan.txt
 
       - name: Plan catch errors Rerun
-        if: ${{ failure() && vars.RERUN_TF_DEV == 'true' && steps.plan_rerun.outcome == 'failure' }}
+        if: ${{ failure() && vars.RERUN_TF_DEV == 'true' && steps.plan_rerun_2.outcome == 'failure' }}
         run: |
           set -o pipefail
           terraform plan -no-color -input=false -var enable_public_api=true -var deploy_apps=true 2>&1 | tee tfplan.txt
