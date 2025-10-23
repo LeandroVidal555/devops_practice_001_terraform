@@ -95,6 +95,10 @@ module "mng_workers" {
 
   labels = { workload = "general_workers" }
 
+  metadata_options = {
+    http_put_response_hop_limit = 2
+  }
+
   timeouts = {
     create = "15m" # default is 60m
     update = "15m"
