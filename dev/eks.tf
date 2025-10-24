@@ -80,7 +80,7 @@ module "mng_workers" {
   create_iam_role = false
   iam_role_arn    = aws_iam_role.worker_nodes_role.arn
 
-  vpc_security_group_ids            = [module.eks.node_security_group_id]
+  vpc_security_group_ids = [module.eks.node_security_group_id]
 
   capacity_type  = local.eks_cluster.capacity_type
   instance_types = local.eks_cluster.instance_types
