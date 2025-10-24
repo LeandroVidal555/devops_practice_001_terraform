@@ -170,9 +170,6 @@ jobs:
               aws elbv2 delete-load-balancer --region us-east-1 --load-balancer-arn "$arn"
             done
 
-          # Give AWS a moment to release attached ENIs/SG refs
-          sleep 15
-
           echo "Deleting Target Groups..."
           aws elbv2 describe-target-groups --region us-east-1 --output json | jq -r '.TargetGroups[] | select(.TargetGroupName | startswith("k8s-")) | .TargetGroupArn' | \
           while read -r tg; do
@@ -200,7 +197,10 @@ jobs:
                 echo "Reached max attempts for SG deletion: $sg" >&2
                 exit 1
               fi
+              echo "deleting SG $sg:"
               aws ec2 delete-security-group --region us-east-1 --group-id "$sg" 2> errfile || true
+              echo "cat errfile:"
+              cat errfile
               if [[ -z $(cat errfile) ]]; then break; fi
               (( ATTEMPTS++ ))
               sleep 20
