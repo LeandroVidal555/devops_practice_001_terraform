@@ -160,6 +160,7 @@ jobs:
       - name: Purge ALB Controller resources (ALB+TG+SG)
         shell: bash
         run: |
+          set -Eeuo pipefail
           MAX_ATTEMPTS=5
 
           echo "Deleting ALBs..."
@@ -177,12 +178,14 @@ jobs:
           while read -r tg; do
             [[ -z "$tg" ]] && continue
             ATTEMPTS=0
-            until aws elbv2 delete-target-group --region us-east-1 --target-group-arn "$tg"; do
-              (( ATTEMPTS++ ))
+            while true; do
               if (( ATTEMPTS >= MAX_ATTEMPTS )); then
-                echo "Reached max attempts for TG deletion: $tg" >&2
+                echo "Reached max attempts for TG deletion: $sg" >&2
                 exit 1
               fi
+              aws elbv2 delete-target-group --region us-east-1 --target-group-arn "$tg" 2> errfile || true
+              if [[ -s $errfile ]]; then break; fi
+              (( ATTEMPTS++ ))
               sleep 20
             done
           done
@@ -192,16 +195,17 @@ jobs:
           while read -r sg; do
             [[ -z "$sg" ]] && continue
             ATTEMPTS=0
-            until aws ec2 delete-security-group --region us-east-1 --group-id "$sg"; do
-              (( ATTEMPTS++ ))
+            while true; do
               if (( ATTEMPTS >= MAX_ATTEMPTS )); then
                 echo "Reached max attempts for SG deletion: $sg" >&2
                 exit 1
               fi
+              aws ec2 delete-security-group --region us-east-1 --group-id "$sg" 2> errfile || true
+              if [[ -s $errfile ]]; then break; fi
+              (( ATTEMPTS++ ))
               sleep 20
             done
           done
-
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
