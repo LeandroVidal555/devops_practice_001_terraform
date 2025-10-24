@@ -131,8 +131,8 @@ jobs:
         run: |
           set -Eeuo pipefail
           ATTEMPTS=0
-          echo "((++))"
-          ((ATTEMPTS++))
+          echo "let asd++"
+          let ATTEMPTS++
           echo $ATTEMPTS
           echo "(( ++ ))"
           (( ATTEMPTS++ ))
