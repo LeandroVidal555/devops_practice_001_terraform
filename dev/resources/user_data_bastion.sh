@@ -3,7 +3,20 @@ echo "###### STARTING USER DATA RUN $(date)..."
 set -euo pipefail
 dnf -y update
 
-KARCH=arm64
+# Determine arch and normalize the string
+ARCH=$(uname -m)
+case "$ARCH" in
+    x86_64)
+        KARCH="amd64"
+        ;;
+    aarch64)
+        KARCH="arm64"
+        ;;
+    *)
+        echo "❌ Unsupported architecture: $ARCH"
+        exit 1
+        ;;
+esac
 VER="$(curl -fsSL https://dl.k8s.io/release/stable.txt)"
 
 curl -fsSL -o /usr/local/bin/kubectl "https://dl.k8s.io/release/${VER}/bin/linux/${KARCH}/kubectl"
