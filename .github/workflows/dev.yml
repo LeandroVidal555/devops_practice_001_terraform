@@ -197,7 +197,7 @@ jobs:
               aws ec2 delete-security-group --region us-east-1 --group-id "$sg" 2> errfile || true
               if [[ -z $(cat errfile) ]]; then echo "ENTRO"; break; fi
               (( ++ATTEMPTS ))
-              sleep 2
+              sleep 20
             done
           done
 
