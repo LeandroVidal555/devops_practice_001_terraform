@@ -202,7 +202,9 @@ jobs:
               echo "cat errfile:"
               cat errfile
               if [[ -z $(cat errfile) ]]; then break; fi
+              cat "++"
               (( ATTEMPTS++ ))
+              cat "sleep 20"
               sleep 20
             done
           done
