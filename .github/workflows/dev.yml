@@ -161,6 +161,7 @@ jobs:
         shell: bash
         run: |
           set -Eeuo pipefail
+          MAX_ATTEMPTS=10
 
           aws elbv2 describe-load-balancers --region us-east-1 --output json | jq -r '.LoadBalancers[] | select(.LoadBalancerName | startswith("k8s-")) | .LoadBalancerArn' \
           | while read -r arn; do
@@ -171,17 +172,44 @@ jobs:
           # Give AWS a moment to release attached ENIs/SG refs
           sleep 15
 
-          aws elbv2 describe-target-groups --region us-east-1 --output json | jq -r '.TargetGroups[] | select(.TargetGroupName | startswith("k8s-")) | .TargetGroupArn' \
-          | while read -r arn; do
-              [[ -z "$arn" ]] && continue
-              aws elbv2 delete-target-group --region us-east-1 --target-group-arn "$arn" || true
+          while read -r arn; do
+            [[ -z "$arn" ]] && continue
+            ATTEMPTS=0
+            while true; do
+              if aws elbv2 delete-target-group --region us-east-1 --target-group-arn "$arn"; then
+                break
+              else
+                if (( ATTEMPTS >= MAX_ATTEMPTS )); then
+                  echo "Reached max attempts for TG deletion. Exiting..."
+                  exit 1
+                fi
+                ((ATTEMPTS++))
+                sleep 10
+              fi
             done
+          done < <(
+            aws elbv2 describe-target-groups --region us-east-1 --output json | jq -r '.TargetGroups[] | select(.TargetGroupName | startswith("k8s-")) | .TargetGroupArn'
+          )
 
-          aws ec2 describe-security-groups --region us-east-1 --output json | jq -r '.SecurityGroups[] | select(.GroupName | startswith("k8s-")) | .GroupId' \
-          | while read -r sg; do
-              [[ -z "$sg" ]] && continue
-              aws ec2 delete-security-group --region us-east-1 --group-id "$sg" || true
+          while read -r sg; do
+            [[ -z "$sg" ]] && continue
+            ATTEMPTS=0
+            while true; do
+              if aws ec2 delete-security-group --region us-east-1 --group-id "$sg"; then
+                break
+              else
+                if (( ATTEMPTS >= MAX_ATTEMPTS )); then
+                  echo "Reached max attempts for SG deletion. Exiting..."
+                  exit 1
+                fi
+                ((ATTEMPTS++))
+                sleep 10
+              fi
             done
+          done < <(
+            aws ec2 describe-security-groups --region us-east-1 --output json | jq -r '.SecurityGroups[] | select(.GroupName | startswith("k8s-")) | .GroupId'
+          )
+
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve

@@ -28,7 +28,7 @@ locals {
     apps_path = "${var.env}/apps"
   }
   bastion = {
-    instance_type               = "t4g.micro"
+    instance_type               = t2.micro # FREE TIER #"t4g.micro"
     subnet_id                   = module.vpc.private_subnets[0]
     user_data_file              = file("${path.module}/resources/user_data_bastion.sh")
     user_data_replace_on_change = true
