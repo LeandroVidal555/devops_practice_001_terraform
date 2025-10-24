@@ -129,7 +129,7 @@ jobs:
 
       - name: DEBUG COUNTER
         run: |
-          set -Eeuo pipefail
+          #set -Eeuo pipefail
           ATTEMPTS=0
           echo "let asd++"
           let ATTEMPTS++
