@@ -81,6 +81,10 @@ resource "helm_release" "aws_load_balancer_controller" {
       value = var.aws_region
     },
     {
+      name  = "enableBackendSecurityGroup"
+      value = "true"
+    },
+    {
       name  = "enableManageBackendSecurityGroupRules"
       value = "true"
     }
