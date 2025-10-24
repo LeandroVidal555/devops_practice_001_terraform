@@ -123,26 +123,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-
-
-
-
-      - name: DEBUG COUNTER
-        run: |
-          #set -Eeuo pipefail
-          ATTEMPTS=0
-          echo "let asd++"
-          let ATTEMPTS++
-          echo $ATTEMPTS
-          echo "(( ++ ))"
-          (( ATTEMPTS++ ))
-          echo $ATTEMPTS
-
-
-
-
-
-
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -199,7 +179,7 @@ jobs:
               fi
               aws elbv2 delete-target-group --region us-east-1 --target-group-arn "$tg" 2> errfile || true
               if [[ -z $(cat errfile) ]]; then break; fi
-              (( ATTEMPTS++ ))
+              (( ++ATTEMPTS ))
               sleep 20
             done
           done
@@ -216,10 +196,8 @@ jobs:
               fi
               aws ec2 delete-security-group --region us-east-1 --group-id "$sg" 2> errfile || true
               if [[ -z $(cat errfile) ]]; then echo "ENTRO"; break; fi
-              echo "++"
-              (( ATTEMPTS++ ))
-              echo "sleep 20"
-              sleep 20
+              (( ++ATTEMPTS ))
+              sleep 2
             done
           done
 
