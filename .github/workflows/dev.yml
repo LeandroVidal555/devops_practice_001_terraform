@@ -70,7 +70,6 @@ jobs:
       ###### PLAN
       - name: Check EKS cluster
         id: eks_status
-        shell: bash
         run: |
           set -euo pipefail
           if aws eks describe-cluster --name dev-dp-001-cluster --region us-east-1 > /dev/null 2>&1; then
@@ -124,6 +123,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+
+
+
+
+      - name: DEBUG COUNTER
+        run: |
+          set -Eeuo pipefail
+          ATTEMPTS=0
+          echo "((++))"
+          ((ATTEMPTS++))
+          echo $ATTEMPTS
+          echo "(( ++ ))"
+          (( ATTEMPTS++ ))
+          echo $ATTEMPTS
+
+
+
+
+
+
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -140,7 +159,6 @@ jobs:
 
       - name: Check EKS cluster
         id: eks_status
-        shell: bash
         run: |
           set -euo pipefail
           if aws eks describe-cluster --name dev-dp-001-cluster --region us-east-1 > /dev/null 2>&1; then
@@ -158,7 +176,6 @@ jobs:
           kubectl -n argocd patch application root-app-dev -p '{"metadata":{"finalizers":[]}}' --type=merge || true
 
       - name: Purge ALB Controller resources (ALB+TG+SG)
-        shell: bash
         run: |
           set -Eeuo pipefail
           MAX_ATTEMPTS=5
@@ -197,11 +214,7 @@ jobs:
                 echo "Reached max attempts for SG deletion: $sg" >&2
                 exit 1
               fi
-              echo "deleting SG $sg:"
               aws ec2 delete-security-group --region us-east-1 --group-id "$sg" 2> errfile || true
-              echo "cat errfile:"
-              cat errfile
-              echo "id"
               if [[ -z $(cat errfile) ]]; then echo "ENTRO"; break; fi
               echo "++"
               (( ATTEMPTS++ ))
