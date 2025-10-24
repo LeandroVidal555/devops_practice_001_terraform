@@ -39,6 +39,11 @@ resource "aws_iam_role_policy_attachment" "alb_attach" {
 }
 
 resource "helm_release" "aws_load_balancer_controller" {
+  depends_on = [
+    aws_iam_role_policy_attachment.alb_attach,
+    module.mng_workers
+  ]
+
   name       = "${var.env}-${var.common_prefix}-albcont"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
@@ -78,9 +83,5 @@ resource "helm_release" "aws_load_balancer_controller" {
       name  = "enableManageBackendSecurityGroupRules"
       value = "true"
     }
-  ]
-
-  depends_on = [
-    aws_iam_role_policy_attachment.alb_attach,
   ]
 }
