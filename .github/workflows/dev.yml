@@ -160,14 +160,13 @@ jobs:
       - name: Purge ALB Controller resources (ALB+TG+SG)
         shell: bash
         run: |
-          set -Eeuo pipefail
           MAX_ATTEMPTS=5
 
           echo "Deleting ALBs..."
           aws elbv2 describe-load-balancers --region us-east-1 --output json | jq -r '.LoadBalancers[] | select(.LoadBalancerName | startswith("k8s-")) | .LoadBalancerArn' \
           | while read -r arn; do
               [[ -z "$arn" ]] && continue
-              aws elbv2 delete-load-balancer --region us-east-1 --load-balancer-arn "$arn" || true
+              aws elbv2 delete-load-balancer --region us-east-1 --load-balancer-arn "$arn"
             done
 
           # Give AWS a moment to release attached ENIs/SG refs
