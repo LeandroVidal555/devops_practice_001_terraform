@@ -14,6 +14,8 @@ module "ec2_bastion" {
 
   name                        = "${var.env}-${var.common_prefix}-bastion"
   instance_type               = local.bastion.instance_type
+  architecture                = local.bastion.architecture
+  ami_regex                   = local.bastion.ami_regex
   subnet_id                   = local.bastion.subnet_id
   user_data_file              = local.bastion.user_data_file
   user_data_replace_on_change = local.bastion.user_data_replace_on_change

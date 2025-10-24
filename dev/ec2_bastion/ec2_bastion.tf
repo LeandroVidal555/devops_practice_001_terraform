@@ -3,11 +3,11 @@ data "aws_ami" "latest" {
   owners      = ["amazon"]
   filter {
     name   = "architecture"
-    values = ["arm64"]
+    values = [var.architecture]
   }
   filter {
     name   = "name"
-    values = ["al2023-ami-2023*arm64"]
+    values = [var.ami_regex]
   }
 }
 

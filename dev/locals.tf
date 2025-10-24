@@ -29,6 +29,8 @@ locals {
   }
   bastion = {
     instance_type               = "t2.micro" # FREE TIER #"t4g.micro"
+    architecture                = "x86_64" # or "arm64"
+    ami_regex                   = "al2023-ami-2023*x86_64" # or "al2023-ami-2023*arm64"
     subnet_id                   = module.vpc.private_subnets[0]
     user_data_file              = file("${path.module}/resources/user_data_bastion.sh")
     user_data_replace_on_change = true
