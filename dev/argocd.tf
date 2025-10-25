@@ -43,7 +43,7 @@ resource "helm_release" "argocd" {
         ingress = {
           enabled          = true
           ingressClassName = "alb"
-          hosts            = ["argo.${var.env}.${var.domain}"]
+          hostname         = "argo.${var.env}.${var.domain}"
 
           annotations = {
             "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
