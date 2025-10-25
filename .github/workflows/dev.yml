@@ -210,12 +210,12 @@ jobs:
             done
           done
 
-      - name: Prune zombie cluster in TF State
-        run: |
-          terraform state rm \
-            helm_release.argocd \
-            kubernetes_namespace_v1.argocd \
-            kubernetes_manifest.argocd_root_app
+          #      - name: Prune zombie cluster in TF State
+          #        run: |
+          #          terraform state rm \
+          #            helm_release.argocd \
+          #            kubernetes_namespace_v1.argocd \
+          #            kubernetes_manifest.argocd_root_app
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve

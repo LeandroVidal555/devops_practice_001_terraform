@@ -14,6 +14,7 @@ variable "cluster_version" { type = string }
 variable "admin_sso_role_hash" { type = string }
 variable "argocd_chart_version" { type = string }
 variable "albcont_chart_version" { type = string }
+variable "met_srv_chart_version" { type = string }
 variable "enable_public_api" {
   type    = bool
   default = false
