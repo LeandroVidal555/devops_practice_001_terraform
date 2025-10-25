@@ -25,7 +25,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.17.0"
     }
-    helm = { # for ArgoCD
+    helm = {
       source  = "hashicorp/helm"
       version = ">= 3.0.2"
     }

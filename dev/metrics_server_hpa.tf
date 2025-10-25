@@ -8,7 +8,7 @@ resource "helm_release" "metrics_server" {
   set = [
     {
       name  = "args[0]"
-      value = "--kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP"
+      value = "--kubelet-preferred-address-types=InternalIP\\,Hostname\\,ExternalIP"
     }
   ]
 }
