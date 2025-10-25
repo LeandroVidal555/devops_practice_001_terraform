@@ -38,8 +38,31 @@ resource "helm_release" "argocd" {
         service = {
           type = "ClusterIP"
         }
-        # Optional: turn on plaintext login for first access (TLS termination via Ingress/NLB later)
-        extraArgs = ["--insecure"]
+        extraArgs = ["--insecure"] # TLS is terminated at the ALB
+
+        ingress = {
+          enabled          = true
+          ingressClassName = "alb"
+          hosts            = ["argo.${var.env}.${var.domain}"]
+
+          annotations = {
+            "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
+            "alb.ingress.kubernetes.io/target-type"      = "ip"
+            "alb.ingress.kubernetes.io/healthcheck-path" = "/healthz"
+            "alb.ingress.kubernetes.io/group.name"       = "${var.env}-argocd"
+            "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTPS\":443}]"
+            "alb.ingress.kubernetes.io/certificate-arn"  = var.acm_cert_arn
+          }
+
+          paths = [
+            # UI/API over HTTP (TLS already at ALB)
+            {
+              path     = "/"
+              pathType = "Prefix"
+              backend  = { serviceName = "argocd-server", servicePort = 80 }
+            }
+          ]
+        }
       }
 
       # Reduce noise

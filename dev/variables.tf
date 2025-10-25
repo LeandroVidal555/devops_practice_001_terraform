@@ -26,3 +26,5 @@ variable "deploy_apps" {
   type    = bool
   default = false
 }
+variable "domain" { type = string }
+variable "acm_cert_arn" { type = string }
