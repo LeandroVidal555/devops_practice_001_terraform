@@ -5,7 +5,7 @@ resource "helm_release" "metrics_server" {
   chart      = "metrics-server"
   version    = var.met_srv_chart_version
 
-  set = {
+  set {
     name  = "args[0]"
     value = "--kubelet-preferred-address-types=InternalIP,Hostname,ExternalIP"
   }
