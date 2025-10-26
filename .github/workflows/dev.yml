@@ -220,3 +220,8 @@ jobs:
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
+
+      - name: Reset destroy flag
+        env:
+          GH_TOKEN: ${{ secrets.TF_GA_PAT }}
+        run: gh variable set DESTROY_TF_DEV --body "false" --repo "${{ github.repository }}" 
