@@ -1,6 +1,6 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "21.1.5"
+  version = var.eks_module_version
 
   name               = local.eks_cluster.name
   kubernetes_version = local.eks_cluster.cluster_version
@@ -68,7 +68,7 @@ module "mng_workers" {
   depends_on = [aws_eks_access_entry.worker_nodes]
 
   source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
-  version = "21.1.5"
+  version = var.eks_module_version
 
   name               = "workers"
   kubernetes_version = local.eks_cluster.cluster_version
