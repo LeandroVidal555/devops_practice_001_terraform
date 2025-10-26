@@ -212,11 +212,14 @@ jobs:
 
       - name: Remove usual EKS blockers from TF State
         run: |
-          terraform state rm \
+          for resource in \
             helm_release.argocd \
             helm_release.aws_load_balancer_controller \
             kubernetes_namespace_v1.argocd \
             kubernetes_manifest.argocd_root_app
+          do
+            terraform state rm "$resource" || true
+          done
 
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
