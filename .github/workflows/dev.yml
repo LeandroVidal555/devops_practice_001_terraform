@@ -174,7 +174,7 @@ jobs:
             ATTEMPTS=0
             while true; do
               if (( ATTEMPTS >= MAX_ATTEMPTS )); then
-                echo "Reached max attempts for TG deletion: $sg" >&2
+                echo "Reached max attempts for TG deletion: $tg" >&2
                 exit 1
               fi
               aws elbv2 delete-target-group --target-group-arn "$tg" 2> errfile || true
