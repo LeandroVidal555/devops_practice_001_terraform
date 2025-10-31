@@ -2,7 +2,7 @@ resource "helm_release" "vmagent" {
   depends_on = [helm_release.victoria_metrics]
 
   name       = "vmagent"
-  chart      = "vmagent"
+  chart      = "victoria-metrics-agent"
   repository = "https://victoriametrics.github.io/helm-charts/"
   namespace  = kubernetes_namespace_v1.monitoring.metadata[0].name
   version    = var.vmagent_chart_version
