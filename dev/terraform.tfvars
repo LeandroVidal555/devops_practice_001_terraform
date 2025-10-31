@@ -20,7 +20,7 @@ domain                = "lmv-dev.top"
 
 #### MONITORING ####
 vm_chart_version                 = "0.25.1"
-vmagent_chart_version            = "0.26.1"
+vmagent_chart_version            = "1.128.0"
 grafana_chart_version            = "10.1.4"
 kube_state_metrics_chart_version = "6.3.0"
 node_exporter_chart_version      = "4.49.1"
