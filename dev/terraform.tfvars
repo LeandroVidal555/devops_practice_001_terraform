@@ -19,8 +19,8 @@ acm_cert_arn          = "arn:aws:acm:us-east-1:381443105190:certificate/8c7b8504
 domain                = "lmv-dev.top"
 
 #### MONITORING ####
-vm_chart_version                 = "0.25.2"
-vmagent_chart_version            = "0.26.2"
+vm_chart_version                 = "0.25.1"
+vmagent_chart_version            = "0.26.1"
 grafana_chart_version            = "10.1.4"
-kube_state_metrics_chart_version = "6.4.0"
+kube_state_metrics_chart_version = "6.3.0"
 node_exporter_chart_version      = "4.49.1"
