@@ -7,7 +7,7 @@ resource "aws_iam_role" "ebs_csi_controller" {
     Statement = [{
       Effect = "Allow",
       Principal = {
-        Federated = data.aws_iam_openid_connect_provider.eks.arn
+        Federated = module.eks.oidc_provider_arn
       },
       Action = "sts:AssumeRoleWithWebIdentity",
       Condition = {
