@@ -1,3 +1,6 @@
+remoteWriteUrls:
+  - "${remote_write_url}"
+
 replicaCount: 1
 
 serviceAccount:
@@ -12,7 +15,6 @@ persistence:
   mountPath: /vmagent-data
 
 extraArgs:
-  - -remoteWrite.url=${remote_write_url}
   - -remoteWrite.tmpDataPath=/vmagent-data
   - -promscrape.config=/etc/vmagent/scrape.yml
   - -promscrape.streamParse=true
