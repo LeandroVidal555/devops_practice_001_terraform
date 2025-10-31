@@ -1,6 +1,6 @@
 resource "helm_release" "vmagent" {
   depends_on = [helm_release.victoria_metrics]
-  
+
   name       = "vmagent"
   chart      = "vmagent"
   repository = "https://victoriametrics.github.io/helm-charts/"
