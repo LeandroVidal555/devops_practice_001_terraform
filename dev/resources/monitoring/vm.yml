@@ -1,7 +1,7 @@
 server:
   # victoria-metrics single-node container flags
   extraArgs:
-    - "-retentionPeriod=${retention_period}"
+    retentionPeriod: "${retention_period}"
   persistentVolume:
     enabled: true
     size: "${storage_size_gi}Gi"
