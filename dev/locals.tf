@@ -38,7 +38,7 @@ locals {
   }
   monitoring = {
     monitoring_namespace = "monitoring"
-    values_path = "${path.module}/resources/monitoring/"
+    values_path          = "${path.module}/resources/monitoring/"
     vm = {
       vm_storage_size_gi      = 50
       vm_retention_months     = 1
