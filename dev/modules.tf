@@ -30,7 +30,7 @@ module "monitoring" {
   monitoring_namespace = local.monitoring.monitoring_namespace
   values_path          = local.monitoring.values_path
 
-  vm_chart_version                 = local.monitoring.vm.vm_chart_version
+  vm_chart_version                 = var.vm_chart_version
   vm_storage_size_gi               = local.monitoring.vm.vm_storage_size_gi
   vm_retention_months              = local.monitoring.vm.vm_retention_months
   vmagent_chart_version            = var.vmagent_chart_version
@@ -39,7 +39,7 @@ module "monitoring" {
   kube_state_metrics_chart_version = var.kube_state_metrics_chart_version
   node_exporter_chart_version      = var.node_exporter_chart_version
 
-  grafana_chart_version   = local.monitoring.grafana.grafana_chart_version
+  grafana_chart_version   = var.grafana_chart_version
   grafana_admin_password  = local.monitoring.grafana.grafana_admin_password
   grafana_persistence     = local.monitoring.grafana.grafana_persistence
   grafana_storage_size_gi = local.monitoring.grafana.grafana_storage_size_gi
