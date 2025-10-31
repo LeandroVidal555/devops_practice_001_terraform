@@ -29,3 +29,14 @@ variable "deploy_apps" {
 }
 variable "domain" { type = string }
 variable "acm_cert_arn" { type = string }
+
+#### MONITORING ####
+variable "vm_chart_version" { type = string }
+variable "vmagent_chart_version" { type = string }
+variable "grafana_chart_version" { type = string }
+variable "kube_state_metrics_chart_version" { type = string }
+variable "node_exporter_chart_version" { type = string }
+variable "deploy_monitoring" {
+  type    = bool
+  default = false
+}

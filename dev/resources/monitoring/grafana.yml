@@ -1,0 +1,23 @@
+adminUser: admin
+adminPassword: ${admin_password}
+
+service:
+  type: ClusterIP
+  port: 80
+
+persistence:
+  enabled: ${enable_persistence}
+  size: "${storage_size_gi}Gi"
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: VictoriaMetrics
+        type: prometheus
+        access: proxy
+        isDefault: true
+        url: ${vm_url}
+        jsonData:
+          httpMethod: POST
+        version: 1

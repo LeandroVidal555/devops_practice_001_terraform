@@ -1,0 +1,22 @@
+server:
+  # victoria-metrics single-node container flags
+  extraArgs:
+    - "-retentionPeriod=${retention_period}"
+  persistentVolume:
+    enabled: true
+    size: "${storage_size_gi}Gi"
+    mountPath: /storage
+
+  # Resource ballparks; tune after observing usage
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "6Gi"
+
+service:
+  type: ClusterIP
+  ports:
+    http: 8428

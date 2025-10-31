@@ -17,3 +17,10 @@ albcont_chart_version = "1.14.1"
 met_srv_chart_version = "3.13.0"
 acm_cert_arn          = "arn:aws:acm:us-east-1:381443105190:certificate/8c7b8504-192e-41e4-8e4d-42e6f828e1c5"
 domain                = "lmv-dev.top"
+
+#### MONITORING ####
+vm_chart_version      = "0.25.2"
+vmagent_chart_version = "0.26.2"
+grafana_chart_version = "10.1.4"
+kube_state_metrics_chart_version = "6.4.0"
+node_exporter_chart_version = "4.49.1"

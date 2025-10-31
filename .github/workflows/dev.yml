@@ -109,6 +109,10 @@ jobs:
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
 
+      - name: Deploy Monitoring Suite
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
+        run: terraform apply -input=false -auto-approve -target=module.monitoring -var enable_public_api=true -var deploy_monitoring=true
+
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false -var deploy_apps=true
@@ -216,7 +220,11 @@ jobs:
             helm_release.argocd \
             helm_release.aws_load_balancer_controller \
             kubernetes_namespace_v1.argocd \
-            kubernetes_manifest.argocd_root_app
+            kubernetes_manifest.argocd_root_app \
+            module.monitoring.kubernetes_namespace_v1.monitoring \
+            module.monitoring.helm_release.victoria_metrics \
+            module.monitoring.helm_release.vmagent \
+            module.monitoring.helm_release.grafana
           do
             terraform state rm "$resource" || true
           done

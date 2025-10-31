@@ -12,9 +12,9 @@ locals {
     cluster_version         = var.cluster_version
     capacity_type           = "SPOT"
     instance_types          = ["t3a.medium", "t3.medium"]
-    desired_size            = 1
+    desired_size            = 2
     min_size                = 0
-    max_size                = 2
+    max_size                = 3
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
     admin_roles = [
@@ -35,5 +35,20 @@ locals {
     user_data_file              = file("${path.module}/resources/user_data_bastion.sh")
     user_data_replace_on_change = true
     policy_file                 = file("${path.module}/resources/ec2_bastion_role.json")
+  }
+  monitoring = {
+    monitoring_namespace = "monitoring"
+    values_path = "${path.module}/resources/monitoring/"
+    vm = {
+      vm_storage_size_gi      = 50
+      vm_retention_months     = 1
+      vmagent_buffer_size_gi  = 10
+      vmagent_scrape_interval = "30s"
+    }
+    grafana = {
+      grafana_admin_password  = "admin"
+      grafana_persistence     = true
+      grafana_storage_size_gi = 10
+    }
   }
 }
