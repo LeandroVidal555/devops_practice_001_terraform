@@ -1,4 +1,6 @@
 resource "helm_release" "vmagent" {
+  depends_on = [helm_release.victoria_metrics]
+  
   name       = "vmagent"
   chart      = "vmagent"
   repository = "https://victoriametrics.github.io/helm-charts/"
@@ -10,6 +12,4 @@ resource "helm_release" "vmagent" {
     buffer_size_gi   = var.vmagent_buffer_size_gi
     scrape_interval  = var.vmagent_scrape_interval
   })]
-
-  depends_on = [helm_release.victoria_metrics]
 }
