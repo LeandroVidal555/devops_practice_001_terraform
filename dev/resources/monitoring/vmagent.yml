@@ -23,7 +23,6 @@ configMap:
     global:
       scrape_interval: "${scrape_interval}"
       scrape_timeout: "10s"
-
     scrape_configs:
       - job_name: "kubernetes-annotated"
         kubernetes_sd_configs:
@@ -50,7 +49,6 @@ configMap:
             target_label: service
           - action: labeldrop
             regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
-
       - job_name: "node-exporter"
         kubernetes_sd_configs:
           - role: endpoints
@@ -69,7 +67,6 @@ configMap:
           - action: keep
             source_labels: [__meta_kubernetes_endpoint_port_name]
             regex: "metrics"
-
       - job_name: "kube-state-metrics"
         kubernetes_sd_configs:
           - role: endpoints
