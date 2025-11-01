@@ -18,71 +18,72 @@ extraArgs:
   remoteWrite.tmpDataPath: /tmpData
   promscrape.streamParse: "true"
 
-config: |-
+config:
   # This writes a full Prometheus-style scrape config into /etc/vmagent/scrape.yml
   # Start lean: scrape annotated services + node-exporter + kube-state-metrics if present.
   # You can add kubelet/apiserver later (TLS/auth).
-  global:
-    scrape_interval: ${scrape_interval}
-    scrape_timeout: 10s
+  scrape.yml: |-
+    global:
+      scrape_interval: ${scrape_interval}
+      scrape_timeout: 10s
 
-  scrape_configs:
-    # Annotated services/pods (prometheus.io/*)
-    - job_name: "kubernetes-annotated"
-      kubernetes_sd_configs:
-        - role: endpoints
-      relabel_configs:
-        - action: keep
-          source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
-          regex: "true"
-        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
-          target_label: __scheme__
-          regex: "(https?)"
-        - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
-          target_label: __metrics_path__
-          regex: "(.+)"
-        - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
-          regex: "(.+?)(?::\\d+)?;(\\d+)"
-          replacement: "$1:$2"
-          target_label: __address__
-        - source_labels: [__meta_kubernetes_namespace]
-          target_label: namespace
-        - source_labels: [__meta_kubernetes_pod_name]
-          target_label: pod
-        - source_labels: [__meta_kubernetes_service_name]
-          target_label: service
-        # Drop some high-card labels
-        - action: labeldrop
-          regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
+    scrape_configs:
+      # Annotated services/pods (prometheus.io/*)
+      - job_name: "kubernetes-annotated"
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+            regex: "true"
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+            target_label: __scheme__
+            regex: "(https?)"
+          - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+            target_label: __metrics_path__
+            regex: "(.+)"
+          - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+            regex: "(.+?)(?::\\d+)?;(\\d+)"
+            replacement: "$1:$2"
+            target_label: __address__
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: service
+          # Drop some high-card labels
+          - action: labeldrop
+            regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
 
-    - job_name: "node-exporter"
-      kubernetes_sd_configs:
-        - role: endpoints
-      relabel_configs:
-        # keep only the Service named prometheus-node-exporter
-        - action: keep
-          source_labels: [__meta_kubernetes_service_name]
-          regex: "prometheus-node-exporter"
-        # attach useful labels
-        - source_labels: [__meta_kubernetes_namespace]
-          target_label: namespace
-        - source_labels: [__meta_kubernetes_pod_node_name]
-          target_label: node
-        - source_labels: [__meta_kubernetes_node]
-          target_label: instance
-        - replacement: "node"
-          target_label: job
-        # ensure only the metrics port is used
-        - action: keep
-          source_labels: [__meta_kubernetes_endpoint_port_name]
-          regex: "metrics"
+      - job_name: "node-exporter"
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          # keep only the Service named prometheus-node-exporter
+          - action: keep
+            source_labels: [__meta_kubernetes_service_name]
+            regex: "prometheus-node-exporter"
+          # attach useful labels
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_node_name]
+            target_label: node
+          - source_labels: [__meta_kubernetes_node]
+            target_label: instance
+          - replacement: "node"
+            target_label: job
+          # ensure only the metrics port is used
+          - action: keep
+            source_labels: [__meta_kubernetes_endpoint_port_name]
+            regex: "metrics"
 
-    - job_name: "kube-state-metrics"
-      kubernetes_sd_configs:
-        - role: endpoints
-      relabel_configs:
-        - action: keep
-          source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
-          regex: "kube-state-metrics"
-        - source_labels: [__meta_kubernetes_namespace]
-          target_label: namespace
+      - job_name: "kube-state-metrics"
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_service_label_app_kubernetes_io_name]
+            regex: "kube-state-metrics"
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
