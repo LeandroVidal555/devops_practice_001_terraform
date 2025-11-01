@@ -1,5 +1,5 @@
 remoteWrite:
-  - "${remote_write_url}"
+  - url: "${remote_write_url}" 
 
 replicaCount: 1
 
