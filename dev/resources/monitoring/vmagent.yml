@@ -60,7 +60,7 @@ config:
       relabel_configs:
         #- action: keep
         #  source_labels: [__meta_kubernetes_endpoint_node_name]
-        #  regex: "${KUBE_NODE_NAME}"
+        #  regex: "$${KUBE_NODE_NAME}"
         - action: keep
           source_labels: [__meta_kubernetes_service_name]
           regex: "prometheus-node-exporter"
