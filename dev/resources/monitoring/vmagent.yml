@@ -1,4 +1,4 @@
-remoteWriteUrls:
+remoteWrite:
   - "${remote_write_url}"
 
 replicaCount: 1
