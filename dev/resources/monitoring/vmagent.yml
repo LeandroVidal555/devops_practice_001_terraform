@@ -18,7 +18,7 @@ extraArgs:
   remoteWrite.tmpDataPath: /tmpData
   promscrape.streamParse: "true"
 
-config:
+configMap:
   # This writes a full Prometheus-style scrape config into /etc/vmagent/scrape.yml
   # Start lean: scrape annotated services + node-exporter + kube-state-metrics if present.
   # You can add kubelet/apiserver later (TLS/auth).
