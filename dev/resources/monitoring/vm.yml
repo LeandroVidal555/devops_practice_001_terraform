@@ -17,6 +17,4 @@ server:
       memory: "6Gi"
 
 service:
-  type: ClusterIP
-  ports:
-    http: 8428
+  clusterIP: "" # <- important: empty means “assign one”
