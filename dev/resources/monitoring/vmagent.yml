@@ -15,9 +15,9 @@ persistence:
   mountPath: /vmagent-data
 
 extraArgs:
-  - -remoteWrite.tmpDataPath=/vmagent-data
-  - -promscrape.config=/etc/vmagent/scrape.yml
-  - -promscrape.streamParse=true
+  remoteWrite.tmpDataPath: /vmagent-data
+  promscrape.config: /etc/vmagent/scrape.yml
+  promscrape.streamParse: true
 
 config:
   # This writes a full Prometheus-style scrape config into /etc/vmagent/scrape.yml
