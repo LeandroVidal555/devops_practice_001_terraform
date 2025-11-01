@@ -19,16 +19,12 @@ extraArgs:
   promscrape.streamParse: "true"
 
 configMap:
-  # This writes a full Prometheus-style scrape config into /etc/vmagent/scrape.yml
-  # Start lean: scrape annotated services + node-exporter + kube-state-metrics if present.
-  # You can add kubelet/apiserver later (TLS/auth).
   scrape.yml: |-
     global:
-      scrape_interval: ${scrape_interval}
-      scrape_timeout: 10s
+      scrape_interval: "${scrape_interval}"
+      scrape_timeout: "10s"
 
     scrape_configs:
-      # Annotated services/pods (prometheus.io/*)
       - job_name: "kubernetes-annotated"
         kubernetes_sd_configs:
           - role: endpoints
@@ -52,7 +48,6 @@ configMap:
             target_label: pod
           - source_labels: [__meta_kubernetes_service_name]
             target_label: service
-          # Drop some high-card labels
           - action: labeldrop
             regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
 
@@ -60,11 +55,9 @@ configMap:
         kubernetes_sd_configs:
           - role: endpoints
         relabel_configs:
-          # keep only the Service named prometheus-node-exporter
           - action: keep
             source_labels: [__meta_kubernetes_service_name]
             regex: "prometheus-node-exporter"
-          # attach useful labels
           - source_labels: [__meta_kubernetes_namespace]
             target_label: namespace
           - source_labels: [__meta_kubernetes_pod_node_name]
@@ -73,7 +66,6 @@ configMap:
             target_label: instance
           - replacement: "node"
             target_label: job
-          # ensure only the metrics port is used
           - action: keep
             source_labels: [__meta_kubernetes_endpoint_port_name]
             regex: "metrics"
