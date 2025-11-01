@@ -35,6 +35,18 @@ config:
         - action: keep
           source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
           regex: "true"
+        #Drop services we scrape via dedicated jobs (see further below):
+        - action: drop
+          source_labels: [__meta_kubernetes_service_name]
+          regex: "(?:node-exporter.*|kube-state-metrics|kube-dns)"
+        #Skip kube-system namespace to avoid CoreDNS etc.
+        - action: drop
+          source_labels: [__meta_kubernetes_namespace]
+          regex: "kube-system"
+        #These generate high cardinality:
+        - action: labeldrop
+          regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
+        #General relabels
         - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
           target_label: __scheme__
           regex: "(https?)"
@@ -51,8 +63,6 @@ config:
           target_label: pod
         - source_labels: [__meta_kubernetes_service_name]
           target_label: service
-        - action: labeldrop
-          regex: "pod_uid|controller_revision_hash|endpoint|pod_template_hash"
 
     - job_name: "node-exporter"
       kubernetes_sd_configs:
