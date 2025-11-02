@@ -221,13 +221,13 @@ jobs:
             kubernetes_manifest.argocd_root_app \
             helm_release.argocd \
             helm_release.aws_load_balancer_controller \
-            helm_release.metrics_server
-            module.monitoring.kubernetes_namespace_v1.monitoring \
-            module.monitoring.helm_release.victoria_metrics \
-            module.monitoring.helm_release.vmagent \
-            module.monitoring.helm_release.grafana \
-            module.monitoring.helm_release.kube_state_metrics \
-            module.monitoring.helm_release.node_exporter
+            helm_release.metrics_server \
+            module.monitoring[0].kubernetes_namespace_v1.monitoring \
+            module.monitoring[0].helm_release.victoria_metrics \
+            module.monitoring[0].helm_release.vmagent \
+            module.monitoring[0].helm_release.grafana \
+            module.monitoring[0].helm_release.kube_state_metrics \
+            module.monitoring[0].helm_release.node_exporter
           do
             terraform state rm "$resource" || true
           done
