@@ -1,4 +1,5 @@
 loki:
+  mode: "single"
   auth_enabled: false
 
   commonConfig:
