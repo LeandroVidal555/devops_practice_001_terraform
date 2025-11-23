@@ -16,3 +16,9 @@ variable "grafana_chart_version" { type = string }
 variable "grafana_admin_password" { type = string }
 variable "grafana_persistence" { type = bool }
 variable "grafana_storage_size_gi" { type = number }
+
+# LOKI
+variable "loki_chart_version" { type = string }
+variable "loki_persistence" { type = bool }
+variable "loki_storage_size_gi" { type = number }
+variable "promtail_chart_version" { type = string }

@@ -1,0 +1,48 @@
+# One promtail pod per node
+daemonset:
+  enabled: true
+
+config:
+  # Promtail main config
+  clients:
+    - url: "${loki_url}"
+
+  server:
+    http_listen_port: 3101
+    grpc_listen_port: 0
+
+  positions:
+    filename: /run/promtail/positions.yaml
+
+  scrape_configs:
+
+    # ===== Kubernetes Pod Logs =====
+    - job_name: kubernetes-pods
+      pipeline_stages:
+        - docker: {}
+      kubernetes_sd_configs:
+        - role: pod
+      relabel_configs:
+        # Read logs from /var/log/containers
+        - source_labels: [__path__]
+          target_label: __path__
+
+        # Keep only pods with a container log file
+        - action: keep
+          source_labels: [__meta_kubernetes_pod_container_name]
+          regex: ".+"
+
+        # Add useful labels
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: namespace
+        - source_labels: [__meta_kubernetes_pod_name]
+          target_label: pod
+        - source_labels: [__meta_kubernetes_pod_container_name]
+          target_label: container
+        - source_labels: [__meta_kubernetes_pod_node_name]
+          target_label: node
+        - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+          target_label: app
+
+extraArgs:
+  - -config.expand-env=true

@@ -227,7 +227,9 @@ jobs:
             module.monitoring[0].helm_release.vmagent \
             module.monitoring[0].helm_release.grafana \
             module.monitoring[0].helm_release.kube_state_metrics \
-            module.monitoring[0].helm_release.node_exporter
+            module.monitoring[0].helm_release.node_exporter \
+            module.monitoring[0].helm_release.loki \
+            module.monitoring[0].helm_release.promtail
           do
             terraform state rm "$resource" || true
           done

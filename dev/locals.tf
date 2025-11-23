@@ -50,5 +50,9 @@ locals {
       grafana_persistence     = true
       grafana_storage_size_gi = 10
     }
+    loki = {
+      loki_persistence     = true
+      loki_storage_size_gi = 10
+    }
   }
 }

@@ -43,4 +43,9 @@ module "monitoring" {
   grafana_admin_password  = local.monitoring.grafana.grafana_admin_password
   grafana_persistence     = local.monitoring.grafana.grafana_persistence
   grafana_storage_size_gi = local.monitoring.grafana.grafana_storage_size_gi
+
+  loki_chart_version     = var.loki_chart_version
+  loki_persistence       = local.monitoring.loki.loki_persistence
+  loki_storage_size_gi   = local.monitoring.loki.loki_storage_size_gi
+  promtail_chart_version = var.promtail_chart_version
 }
