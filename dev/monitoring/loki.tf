@@ -8,7 +8,7 @@ resource "helm_release" "loki" {
   version    = var.loki_chart_version
 
   values = [templatefile("${var.values_path}/loki.yml", {
-    enable_persistence   = var.loki_persistence
+    loki_persistence   = var.loki_persistence
     loki_storage_size_gi = var.loki_storage_size_gi
   })]
 }
