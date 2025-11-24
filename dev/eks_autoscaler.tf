@@ -40,8 +40,8 @@ resource "helm_release" "cluster_autoscaler" {
       extraArgs = {
         skip-nodes-with-system-pods   = false
         skip-nodes-with-local-storage = false
-        balance-similar-node-groups      = true
-        node-group-auto-discovery: "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${module.eks.cluster_name}"
+        balance-similar-node-groups   = true
+        node-group-auto-discovery : "asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/${module.eks.cluster_name}"
       }
       extraDeploy = [<<-YAML
         apiVersion: policy/v1
