@@ -13,7 +13,7 @@ locals {
     capacity_type           = "SPOT"
     instance_types          = ["t3a.medium", "t3.medium"]
     desired_size            = 3
-    min_size                = 0
+    min_size                = 3
     max_size                = 3
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
