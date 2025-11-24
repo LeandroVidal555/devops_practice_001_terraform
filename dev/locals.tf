@@ -12,8 +12,8 @@ locals {
     cluster_version         = var.cluster_version
     capacity_type           = "SPOT"
     instance_types          = ["t3a.medium", "t3.medium"]
-    min_size                = 1
-    max_size                = 3
+    min_size                = 3
+    max_size                = 5
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 20
     admin_roles = [
