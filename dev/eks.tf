@@ -85,16 +85,14 @@ module "mng_workers" {
   capacity_type  = local.eks_cluster.capacity_type
   instance_types = local.eks_cluster.instance_types
 
-  min_size     = local.eks_cluster.min_size
-  desired_size = local.eks_cluster.desired_size
-  max_size     = local.eks_cluster.max_size
+  min_size = local.eks_cluster.min_size
+  max_size = local.eks_cluster.max_size
 
   ami_type  = local.eks_cluster.ami_type
   disk_size = local.eks_cluster.disk_size
 
   labels = {
     workload = "general_workers"
-    force    = "update1" # use this to force updates
   }
 
   metadata_options = {

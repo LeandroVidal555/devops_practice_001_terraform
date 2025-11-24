@@ -11,6 +11,7 @@ isolated_subnet_cidrs = ["10.0.200.0/24", "10.0.201.0/24"]
 
 #### EKS ####
 cluster_version       = "1.34"
+ca_chart_version      = "9.52.1"
 admin_sso_role_hash   = "e59d6194b0ea5059"
 argocd_chart_version  = "8.3.4"
 albcont_chart_version = "1.14.1"
