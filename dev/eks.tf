@@ -92,7 +92,10 @@ module "mng_workers" {
   ami_type  = local.eks_cluster.ami_type
   disk_size = local.eks_cluster.disk_size
 
-  labels = { workload = "general_workers" }
+  labels = {
+    workload = "general_workers"
+    force    = "update1" # use this to force updates
+  }
 
   metadata_options = {
     http_put_response_hop_limit = 2
