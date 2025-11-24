@@ -12,7 +12,7 @@ locals {
     cluster_version         = var.cluster_version
     capacity_type           = "SPOT"
     instance_types          = ["t3a.medium", "t3.medium"]
-    desired_size            = 2
+    desired_size            = 3
     min_size                = 0
     max_size                = 3
     ami_type                = "AL2023_x86_64_STANDARD"
