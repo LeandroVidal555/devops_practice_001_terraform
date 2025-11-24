@@ -33,7 +33,7 @@ resource "helm_release" "cluster_autoscaler" {
           create = true
           name   = "cluster-autoscaler"
           annotations = {
-            "eks.amazonaws.com/role-arn" = module.cluster_autoscaler_irsa.iam_role_arn
+            "eks.amazonaws.com/role-arn" = module.cluster_autoscaler_irsa.arn
           }
         }
       }
