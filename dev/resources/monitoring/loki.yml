@@ -23,7 +23,6 @@ memcachedExporter: { enabled: false }
 chunksCache: { enabled: false }
 resultsCache: { enabled: false }
 
-lokiCanary: { enabled: false }
 gateway: { enabled: false }
 
 
