@@ -7,7 +7,7 @@ resource "kubernetes_priority_class" "daemon_critical" {
     name = "daemon-critical"
   }
 
-  value         = 1000000000
+  value          = 1000000000
   global_default = false
-  description   = "Guaranteed DaemonSet scheduling on all nodes"
+  description    = "Guaranteed DaemonSet scheduling on all nodes"
 }

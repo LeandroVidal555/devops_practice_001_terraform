@@ -11,7 +11,7 @@ resource "helm_release" "promtail" {
   ]
 
   values = [templatefile("${var.values_path}/promtail.yml", {
-    loki_url = "http://loki.${var.monitoring_namespace}.svc:3100/loki/api/v1/push"
+    loki_url            = "http://loki.${var.monitoring_namespace}.svc:3100/loki/api/v1/push"
     priority_class_name = kubernetes_priority_class.daemon_critical.metadata[0].name
   })]
 }
