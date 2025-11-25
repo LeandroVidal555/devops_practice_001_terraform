@@ -2,6 +2,11 @@
 daemonset:
   enabled: true
 
+priorityClassName: "${priority_class_name}"
+
+extraArgs:
+  - -config.expand-env=true
+
 config:
   # Promtail main config
   clients:
@@ -43,6 +48,3 @@ config:
           target_label: node
         - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
           target_label: app
-
-extraArgs:
-  - -config.expand-env=true

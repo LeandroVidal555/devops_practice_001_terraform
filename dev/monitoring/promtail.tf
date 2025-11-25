@@ -6,10 +6,12 @@ resource "helm_release" "promtail" {
   version    = var.promtail_chart_version
 
   depends_on = [
-    helm_release.loki # ensure Loki exists before Promtail tries to push logs
+    helm_release.loki,
+    kubernetes_priority_class.daemon_critical
   ]
 
   values = [templatefile("${var.values_path}/promtail.yml", {
     loki_url = "http://loki.${var.monitoring_namespace}.svc:3100/loki/api/v1/push"
+    priority_class_name = kubernetes_priority_class.daemon_critical.metadata[0].name
   })]
 }
