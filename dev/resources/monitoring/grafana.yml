@@ -1,6 +1,10 @@
 adminUser: admin
 adminPassword: ${admin_password}
 
+grafana.ini:
+  security:
+    disable_initial_admin_password_change: true
+
 service:
   type: ClusterIP
   port: 80
@@ -21,3 +25,16 @@ datasources:
         jsonData:
           httpMethod: POST
         version: 1
+        editable: true
+      - name: Loki
+        type: loki
+        access: proxy
+        url: ${loki_url}
+        jsonData:
+          maxLines: 5000
+          derivedFields: []
+          httpHeaderName1: "X-Scope-OrgID"
+        secureJsonData:
+          httpHeaderValue1: "tenant_001"
+        version: 1
+        editable: true
