@@ -11,6 +11,7 @@ config:
   # Promtail main config
   clients:
     - url: "${loki_url}"
+      tenant_id: tenant_001
 
   server:
     http_listen_port: 3101
