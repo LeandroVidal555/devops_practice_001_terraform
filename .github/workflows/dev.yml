@@ -103,15 +103,26 @@ jobs:
       ###### APPLY
       - name: Apply (with public eks)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve tfplan
+        run: |
+          if kubectl get ns monitoring >/dev/null 2>&1; then
+            # avoid monitoring destroy
+            terraform apply -input=false -auto-approve tfplan -var deploy_monitoring=true
+          else
+            terraform apply -input=false -auto-approve tfplan
+          fi
 
       - name: Deploy Apps
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
 
       - name: Deploy Monitoring Suite
-        if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=module.monitoring -var enable_public_api=true -var deploy_monitoring=true
+        if: ${{ vars.APPLY_TF_DEV == 'true' && }}
+        run: |
+          if kubectl get ns monitoring >/dev/null 2>&1; then
+            echo "Monitoring already deployed — skipping."
+            exit 0
+          fi
+          terraform apply -input=false -auto-approve -target=module.monitoring -var enable_public_api=true -var deploy_monitoring=true
 
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
