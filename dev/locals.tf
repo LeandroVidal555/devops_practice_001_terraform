@@ -55,4 +55,7 @@ locals {
       loki_storage_size_gi = 10
     }
   }
+  s3_website = {
+    site_url = "${var.common_prefix}-ui.${var.env}.${var.tl_domain}"
+  }
 }

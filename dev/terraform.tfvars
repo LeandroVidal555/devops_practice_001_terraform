@@ -2,6 +2,7 @@
 aws_region    = "us-east-1"
 common_prefix = "dp-001"
 env           = "dev"
+tl_domain     = "lmv-dev.top"
 
 #### VPC ####
 vpc_cidr              = "10.0.0.0/16"

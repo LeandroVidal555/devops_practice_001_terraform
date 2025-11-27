@@ -49,3 +49,10 @@ module "monitoring" {
   loki_storage_size_gi   = local.monitoring.loki.loki_storage_size_gi
   promtail_chart_version = var.promtail_chart_version
 }
+
+module "s3_website" {
+  source = "./s3_website"
+
+  acm_cert_arn = var.acm_cert_arn
+  site_url     = local.s3_website.site_url
+}
