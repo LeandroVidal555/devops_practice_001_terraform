@@ -116,7 +116,7 @@ jobs:
         run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
 
       - name: Deploy Monitoring Suite
-        if: ${{ vars.APPLY_TF_DEV == 'true' && }}
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: |
           if kubectl get ns monitoring >/dev/null 2>&1; then
             echo "Monitoring already deployed — skipping."
