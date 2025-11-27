@@ -82,7 +82,14 @@ jobs:
       
       - name: Plan
         id: plan
-        run: terraform plan -input=false -out=tfplan -var enable_public_api=true
+        run:  |
+          aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1
+          if kubectl get ns monitoring >/dev/null 2>&1; then
+            # avoid monitoring destroy
+            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true
+          else
+            terraform plan -input=false -out=tfplan -var enable_public_api=true
+          fi
 
       - name: Plan full output
         run: terraform show -no-color tfplan > tfplan.txt
