@@ -83,7 +83,7 @@ jobs:
       - name: Plan
         id: plan
         run:  |
-          aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1
+          aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1 || true
           if kubectl get ns monitoring >/dev/null 2>&1; then
             # avoid monitoring destroy
             terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true
