@@ -1,5 +1,6 @@
 resource "aws_s3_bucket" "site" {
   bucket = var.site_url
+  force_destroy = true # destroy even if not empty
 
   tags = {
     Name = var.site_url

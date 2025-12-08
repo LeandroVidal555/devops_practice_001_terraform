@@ -135,6 +135,11 @@ jobs:
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false -var deploy_apps=true
 
+      - name: Sync S3 website
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
+        run: aws s3 sync resources/s3_website s3://dp-001-ui.dev.lmv-dev.top --acl public-read --delete
+
+      
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
     runs-on: ubuntu-latest
