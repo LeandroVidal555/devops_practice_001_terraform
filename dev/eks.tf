@@ -110,8 +110,8 @@ module "mng_workers" {
 resource "aws_eks_addon" "coredns" {
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
-  
-  depends_on   = [module.mng_workers] # ensure nodes exist first
+
+  depends_on = [module.mng_workers] # ensure nodes exist first
 }
 
 resource "helm_release" "metrics_server" {
