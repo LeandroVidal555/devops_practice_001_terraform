@@ -110,13 +110,7 @@ jobs:
       ###### APPLY
       - name: Apply (with public eks)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: |
-          if kubectl get ns monitoring >/dev/null 2>&1; then
-            # avoid monitoring destroy
-            terraform apply -input=false -auto-approve tfplan -var deploy_monitoring=true
-          else
-            terraform apply -input=false -auto-approve tfplan
-          fi
+        run: terraform apply -input=false -auto-approve tfplan
 
       - name: Deploy Apps
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
