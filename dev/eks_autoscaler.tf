@@ -61,6 +61,6 @@ resource "helm_release" "cluster_autoscaler" {
 
   depends_on = [
     module.cluster_autoscaler_irsa,
-    module.eks
+    module.mng_workers # ensure nodes exist first
   ]
 }
