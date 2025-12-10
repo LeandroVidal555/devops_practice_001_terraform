@@ -20,6 +20,18 @@ resource "aws_cloudfront_distribution" "site" {
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
   }
 
+  origin {
+    domain_name = "please update: defined by ALBC"
+    origin_id   = "api-alb"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -27,16 +39,20 @@ resource "aws_cloudfront_distribution" "site" {
 
     viewer_protocol_policy = "redirect-to-https"
 
-    forwarded_values {
-      query_string = false
-      cookies {
-        forward = "none"
-      }
-    }
+    cache_policy_id = "658327ea-f89d-4fab-a63d-7e88639e58f6" # Managed-CachingOptimized
+  }
 
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+  ordered_cache_behavior {
+    path_pattern     = "/api/*"
+    target_origin_id = "api-alb"
+
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD"]
+
+    viewer_protocol_policy = "https-only"
+
+    cache_policy_id          = "413f1603-0d7e-4b75-bf1f-1d1f4f9a9592" # Managed-CachingDisabled
+    origin_request_policy_id = "216adef6-7c7c-47b7-bf5a-8b89f2e5f1d0" # Managed-AllViewerExceptHostHeader
   }
 
   price_class = "PriceClass_100"
