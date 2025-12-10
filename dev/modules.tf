@@ -50,9 +50,9 @@ module "monitoring" {
   promtail_chart_version = var.promtail_chart_version
 }
 
-module "s3_website" {
-  source = "./s3_website"
+module "app_infra" {
+  source = "./app_infra"
 
   acm_cert_arn = var.acm_cert_arn
-  site_url     = local.s3_website.site_url
+  site_url     = local.app_infra.site_url
 }
