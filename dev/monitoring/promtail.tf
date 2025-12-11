@@ -7,11 +7,11 @@ resource "helm_release" "promtail" {
 
   depends_on = [
     helm_release.loki,
-    kubernetes_priority_class.daemon_critical
+    kubernetes_priority_class_v1.daemon_critical
   ]
 
   values = [templatefile("${var.values_path}/promtail.yml", {
     loki_url            = "http://loki.${var.monitoring_namespace}.svc:3100/loki/api/v1/push"
-    priority_class_name = kubernetes_priority_class.daemon_critical.metadata[0].name
+    priority_class_name = kubernetes_priority_class_v1.daemon_critical.metadata[0].name
   })]
 }

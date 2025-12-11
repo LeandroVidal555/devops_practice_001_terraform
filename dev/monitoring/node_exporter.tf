@@ -10,7 +10,7 @@ resource "helm_release" "node_exporter" {
 
   values = [
     templatefile("${var.values_path}/node_exporter.yml", {
-      priority_class_name = kubernetes_priority_class.daemon_critical.metadata[0].name
+      priority_class_name = kubernetes_priority_class_v1.daemon_critical.metadata[0].name
     })
   ]
 }
