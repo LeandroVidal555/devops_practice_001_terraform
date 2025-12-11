@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   origin {
-    domain_name = "please update: defined by ALBC"
+    domain_name = "defined_by_ALBC-please_update"
     origin_id   = "api-alb"
 
     custom_origin_config {
