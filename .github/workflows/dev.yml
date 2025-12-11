@@ -254,6 +254,15 @@ jobs:
       - name: Destroy Infrastructure
         run: terraform destroy -input=false -auto-approve
 
+      - name: Cleanup dangling PVC EBS volumes
+        run: |
+          VOLUMES=$(aws ec2 describe-volumes --filters Name=status,Values=available Name=tag:Name,Values='*pvc*' --query "Volumes[].VolumeId" --output text)
+          if [ -n "$VOLUMES" ]; then
+            for vol in $VOLUMES; do
+              aws ec2 delete-volume --volume-id "$vol"
+            done
+          fi
+
       - name: Reset destroy flag
         env:
           GH_TOKEN: ${{ secrets.TF_GA_PAT }}
