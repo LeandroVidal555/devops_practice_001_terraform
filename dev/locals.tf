@@ -40,18 +40,20 @@ locals {
     monitoring_namespace = "monitoring"
     values_path          = "${path.module}/resources/monitoring/"
     vm = {
+      vm_persistence          = false
       vm_storage_size_gi      = 50
       vm_retention_months     = 1
+      vmagent_persistence     = false
       vmagent_buffer_size_gi  = 10
       vmagent_scrape_interval = "30s"
     }
     grafana = {
       grafana_admin_password  = "admin"
-      grafana_persistence     = true
+      grafana_persistence     = false
       grafana_storage_size_gi = 10
     }
     loki = {
-      loki_persistence     = true
+      loki_persistence     = false
       loki_storage_size_gi = 10
     }
   }

@@ -31,9 +31,11 @@ module "monitoring" {
   values_path          = local.monitoring.values_path
 
   vm_chart_version                 = var.vm_chart_version
+  vm_persistence                   = local.monitoring.vm.vm_persistence
   vm_storage_size_gi               = local.monitoring.vm.vm_storage_size_gi
   vm_retention_months              = local.monitoring.vm.vm_retention_months
   vmagent_chart_version            = var.vmagent_chart_version
+  vmagent_persistence              = local.monitoring.vm.vmagent_persistence
   vmagent_buffer_size_gi           = local.monitoring.vm.vmagent_buffer_size_gi
   vmagent_scrape_interval          = local.monitoring.vm.vmagent_scrape_interval
   kube_state_metrics_chart_version = var.kube_state_metrics_chart_version

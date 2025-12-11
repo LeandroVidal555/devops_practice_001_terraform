@@ -3,9 +3,11 @@ variable "values_path" { type = string }
 
 # VM
 variable "vm_chart_version" { type = string }
+variable "vm_persistence" { type = bool }
 variable "vm_storage_size_gi" { type = number }
 variable "vm_retention_months" { type = number }
 variable "vmagent_chart_version" { type = string }
+variable "vmagent_persistence" { type = bool }
 variable "vmagent_buffer_size_gi" { type = number }
 variable "vmagent_scrape_interval" { type = string }
 variable "kube_state_metrics_chart_version" { type = string }

@@ -2,8 +2,9 @@ server:
   # victoria-metrics single-node container flags
   extraArgs:
     retentionPeriod: "${retention_period}"
+
   persistentVolume:
-    enabled: true
+    enabled: ${vm_persistence}
     size: "${storage_size_gi}Gi"
     mountPath: /storage
 

@@ -10,7 +10,7 @@ service:
   port: 80
 
 persistence:
-  enabled: ${enable_persistence}
+  enabled: ${grafana_persistence}
   size: "${storage_size_gi}Gi"
 
 datasources:

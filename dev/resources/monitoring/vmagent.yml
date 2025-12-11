@@ -12,11 +12,11 @@ mode: deployment
 remoteWrite:
   - url: "${remote_write_url}" 
 
-#persistence:
-#  enabled: true
-#  storageClassName: ""   # use cluster default (see eks_ebs_csi.tf)
-#  size: "${buffer_size_gi}Gi"
-#  mountPath: /vmagent-data
+persistence:
+  enabled: ${vmagent_persistence}
+  storageClassName: ""   # use cluster default (see eks_ebs_csi.tf)
+  size: "${buffer_size_gi}Gi"
+  mountPath: /vmagent-data
 
 extraArgs:
   remoteWrite.tmpDataPath: /tmpData

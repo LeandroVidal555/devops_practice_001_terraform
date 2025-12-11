@@ -35,8 +35,6 @@ resource "aws_eks_addon" "ebs_csi" {
 }
 
 resource "kubernetes_storage_class_v1" "gp3_default" {
-  depends_on = [aws_eks_addon.ebs_csi]
-
   storage_provisioner    = "ebs.csi.aws.com"
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
@@ -52,4 +50,6 @@ resource "kubernetes_storage_class_v1" "gp3_default" {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
+
+  depends_on = [aws_eks_addon.ebs_csi]
 }
