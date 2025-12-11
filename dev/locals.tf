@@ -58,6 +58,6 @@ locals {
     }
   }
   app_infra = {
-    site_url = "${var.common_prefix}-ui.${var.env}.${var.tl_domain}"
+    site_url = "${var.common_prefix}.${var.env}.${var.tl_domain}"
   }
 }
