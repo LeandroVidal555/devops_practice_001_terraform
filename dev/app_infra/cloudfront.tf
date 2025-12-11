@@ -51,8 +51,8 @@ resource "aws_cloudfront_distribution" "site" {
 
     viewer_protocol_policy = "https-only"
 
-    cache_policy_id          = "413f1603-0d7e-4b75-bf1f-1d1f4f9a9592" # Managed-CachingDisabled
-    origin_request_policy_id = "216adef6-7c7c-47b7-bf5a-8b89f2e5f1d0" # Managed-AllViewerExceptHostHeader
+    cache_policy_id          = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # Managed-CachingDisabled
+    origin_request_policy_id = "216adef6-5c7f-47e4-b989-5492eafa07d3" # Managed-AllViewer
   }
 
   price_class = "PriceClass_100"
