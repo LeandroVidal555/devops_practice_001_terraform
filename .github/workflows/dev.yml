@@ -131,7 +131,7 @@ jobs:
 
       - name: Sync S3 website
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: aws s3 sync resources/s3_website s3://dp-001-ui.dev.lmv-dev.top --delete
+        run: aws s3 sync resources/s3_website s3://dp-001.dev.lmv-dev.top --delete
 
       
   destroy:
