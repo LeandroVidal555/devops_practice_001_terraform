@@ -16,12 +16,12 @@ resource "aws_cloudfront_distribution" "site" {
 
   origin {
     domain_name              = aws_s3_bucket.site.bucket_regional_domain_name
-    origin_id                = "s3-${aws_s3_bucket.site.id}"
+    origin_id                = "website-s3-bucket"
     origin_access_control_id = aws_cloudfront_origin_access_control.site.id
   }
 
   origin {
-    domain_name = "undefined.us-east-2.elb.amazonaws.com"
+    domain_name = "UNDEFINED.us-east-2.elb.amazonaws.com"
     origin_id   = "api-alb"
 
     custom_origin_config {
