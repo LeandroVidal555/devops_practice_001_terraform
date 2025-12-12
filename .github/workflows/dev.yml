@@ -73,18 +73,18 @@ jobs:
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
       
       - name: Plan
+        if: ${{ vars.APPLY_TF_DEV == 'true' && vars.DEPLOY_APPS_DEV == 'true' }}
         id: plan
+        env: 
+          APPS_DEPLOYED_DEV: ${{vars.APPS_DEPLOYED_DEV}}
         run:  |
           aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1 || true
           if kubectl get ns monitoring >/dev/null 2>&1; then
             # avoid monitoring destroy
-            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true
+            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true -var deploy_apps=$APPS_DEPLOYED_DEV
           else
-            terraform plan -input=false -out=tfplan -var enable_public_api=true
+            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_apps=$APPS_DEPLOYED_DEV
           fi
-
-      - name: Plan full output
-        run: terraform show -no-color tfplan > tfplan.txt
 
       - name: Plan catch errors
         if: ${{ failure() && steps.plan.outcome == 'failure' }}
@@ -104,9 +104,15 @@ jobs:
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve tfplan
 
-#      - name: Deploy Apps
-#        if: ${{ vars.APPLY_TF_DEV == 'true' }}
-#        run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
+      - name: Deploy Apps
+        if: ${{ vars.APPLY_TF_DEV == 'true' && vars.APPS_DEPLOYED_DEV == 'false' }}
+        run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
+
+      - name: Set deploy apps flag
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.TF_GA_PAT }}
+        run: gh variable set APPS_DEPLOYED_DEV --body "true" --repo "${{ github.repository }}"
 
       - name: Deploy Monitoring Suite
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
