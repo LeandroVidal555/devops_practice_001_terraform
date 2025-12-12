@@ -27,14 +27,16 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
 
 # Addon for dynamic storage creating/binding
 resource "aws_eks_addon" "ebs_csi" {
+  depends_on = [module.mng_workers] # ensure nodes exist first
+
   cluster_name             = module.eks.cluster_name
   addon_name               = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.ebs_csi_controller.arn
-
-  depends_on = [module.mng_workers] # ensure nodes exist first
 }
 
 resource "kubernetes_storage_class_v1" "gp3_default" {
+  depends_on = [aws_eks_addon.ebs_csi]
+  
   storage_provisioner    = "ebs.csi.aws.com"
   reclaim_policy         = "Delete"
   volume_binding_mode    = "WaitForFirstConsumer"
@@ -50,6 +52,4 @@ resource "kubernetes_storage_class_v1" "gp3_default" {
       "storageclass.kubernetes.io/is-default-class" = "true"
     }
   }
-
-  depends_on = [aws_eks_addon.ebs_csi]
 }

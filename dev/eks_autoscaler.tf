@@ -15,6 +15,11 @@ module "cluster_autoscaler_irsa" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
+  depends_on = [
+    module.cluster_autoscaler_irsa,
+    module.mng_workers # ensure nodes exist first
+  ]
+  
   name       = "cluster-autoscaler"
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/autoscaler"
@@ -57,10 +62,5 @@ resource "helm_release" "cluster_autoscaler" {
         YAML
       ]
     })
-  ]
-
-  depends_on = [
-    module.cluster_autoscaler_irsa,
-    module.mng_workers # ensure nodes exist first
   ]
 }
