@@ -73,7 +73,7 @@ jobs:
         run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
       
       - name: Plan
-        if: ${{ vars.APPLY_TF_DEV == 'true' && vars.DEPLOY_APPS_DEV == 'true' }}
+        if: ${{ vars.APPLY_TF_DEV == 'true' }}
         id: plan
         env: 
           APPS_DEPLOYED_DEV: ${{vars.APPS_DEPLOYED_DEV}}
