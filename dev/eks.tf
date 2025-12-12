@@ -119,7 +119,7 @@ resource "helm_release" "metrics_server" {
     module.mng_workers,
     aws_eks_addon.coredns
   ]
-  
+
   name       = "${var.env}-${var.common_prefix}-metrics-server"
   namespace  = "kube-system"
   repository = "https://kubernetes-sigs.github.io/metrics-server/"

@@ -44,7 +44,7 @@ resource "helm_release" "aws_load_balancer_controller" {
     module.mng_workers,
     aws_eks_addon.coredns
   ]
-  
+
   name       = "${var.env}-${var.common_prefix}-albcont"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"

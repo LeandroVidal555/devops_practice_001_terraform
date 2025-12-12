@@ -88,7 +88,7 @@ resource "helm_release" "argocd" {
 }
 
 resource "kubernetes_manifest" "argocd_root_app" {
-  depends_on = [ helm_release.argocd ]
+  depends_on = [helm_release.argocd]
 
   manifest = yamldecode(
     templatefile("${path.module}/resources/argocd_root_app.yml.tpl", {

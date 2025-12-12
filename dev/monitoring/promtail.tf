@@ -3,7 +3,7 @@ resource "helm_release" "promtail" {
     helm_release.loki,
     kubernetes_priority_class_v1.daemon_critical
   ]
-  
+
   name       = "promtail"
   repository = "https://grafana.github.io/helm-charts"
   chart      = "promtail"

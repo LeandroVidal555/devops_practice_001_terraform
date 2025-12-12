@@ -19,7 +19,7 @@ resource "helm_release" "cluster_autoscaler" {
     module.cluster_autoscaler_irsa,
     module.mng_workers # ensure nodes exist first
   ]
-  
+
   name       = "cluster-autoscaler"
   namespace  = "kube-system"
   repository = "https://kubernetes.github.io/autoscaler"
