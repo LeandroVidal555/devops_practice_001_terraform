@@ -46,12 +46,17 @@ resource "helm_release" "argocd" {
           hostname         = "argo.${var.env}.${var.domain}"
 
           annotations = {
-            "alb.ingress.kubernetes.io/scheme"           = "internet-facing"
-            "alb.ingress.kubernetes.io/target-type"      = "ip"
-            "alb.ingress.kubernetes.io/healthcheck-path" = "/healthz"
-            "alb.ingress.kubernetes.io/group.name"       = "${var.env}-argocd"
-            "alb.ingress.kubernetes.io/listen-ports"     = "[{\"HTTPS\":443}]"
-            "alb.ingress.kubernetes.io/certificate-arn"  = var.acm_cert_arn
+            "alb.ingress.kubernetes.io/scheme"                              = "internet-facing"
+            "alb.ingress.kubernetes.io/target-type"                         = "ip"
+            "alb.ingress.kubernetes.io/load-balancer-name"                  = "${var.env}-${var.common_prefix}-admin-alb"
+            "alb.ingress.kubernetes.io/group.name"                          = "${var.env}-${var.common_prefix}-admin"
+            "alb.ingress.kubernetes.io/group.order"                         = "10"
+            "alb.ingress.kubernetes.io/listen-ports"                        = "[{\"HTTPS\":443}]"
+            "alb.ingress.kubernetes.io/certificate-arn"                     = var.acm_cert_arn
+            "alb.ingress.kubernetes.io/healthcheck-path"                    = "/healthz"
+            "alb.ingress.kubernetes.io/inbound-cidrs"                       = "0.0.0.0/0"
+            "alb.ingress.kubernetes.io/manage-backend-security-group-rules" = "true"
+
           }
 
           paths = [
