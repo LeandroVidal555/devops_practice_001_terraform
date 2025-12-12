@@ -35,7 +35,7 @@ resource "aws_cloudfront_distribution" "site" {
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "s3-${aws_s3_bucket.site.id}"
+    target_origin_id = "website-s3-bucket"
 
     viewer_protocol_policy = "redirect-to-https"
 
