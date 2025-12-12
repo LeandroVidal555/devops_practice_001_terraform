@@ -1,16 +1,16 @@
 name: terraform-dev
 
 on:
-  pull_request:
+  pull_request: # trigger on pull request
     paths:
       - 'dev/**/*'
       - '.github/workflows/dev.yml'
-  push:
+  push: # trigger on push
     branches: [ main ]
     paths:
       - 'dev/**/*'
       - '.github/workflows/dev.yml'
-  workflow_dispatch: {}
+  workflow_dispatch: {} # trigger on manual "run workflow" button
 
 env:
   TF_WORKING_DIR: "./dev"
@@ -25,6 +25,7 @@ permissions:
   contents: read
 
 jobs:
+### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY ### APPLY 
   apply:
     if: ${{ vars.DESTROY_TF_DEV == 'false' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
     runs-on: ubuntu-latest
@@ -34,15 +35,6 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
     steps:
       - uses: actions/checkout@v4
-
-      #- name: Show OIDC claims
-      #  uses: actions/github-script@v7
-      #  with:
-      #    script: |
-      #      const idt = await core.getIDToken('sts.amazonaws.com');
-      #      const claims = JSON.parse(Buffer.from(idt.split('.')[1], 'base64').toString());
-      #      console.log('aud:', claims.aud);
-      #      console.log('sub:', claims.sub);
 
       - name: Configure AWS (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -112,9 +104,9 @@ jobs:
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: terraform apply -input=false -auto-approve tfplan
 
-      - name: Deploy Apps
-        if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
+#      - name: Deploy Apps
+#        if: ${{ vars.APPLY_TF_DEV == 'true' }}
+#        run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
 
       - name: Deploy Monitoring Suite
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
@@ -127,13 +119,15 @@ jobs:
 
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false -var deploy_apps=true
+        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false
 
       - name: Sync S3 website
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: aws s3 sync resources/s3_website s3://dp-001.dev.lmv-dev.top --delete
 
-      
+
+
+### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY ### DESTROY 
   destroy:
     if: ${{ vars.DESTROY_TF_DEV == 'true' }} # env vars are evaluated BEFORE the job. Repo vars are used here.
     runs-on: ubuntu-latest
