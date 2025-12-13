@@ -148,4 +148,9 @@ resource "aws_cloudtrail" "eventbridge_mgmt" {
     include_management_events = true
     read_write_type           = "WriteOnly"
   }
+
+  depends_on = [
+    aws_s3_bucket_policy.cloudtrail,
+    aws_s3_bucket_public_access_block.cloudtrail
+  ]
 }
