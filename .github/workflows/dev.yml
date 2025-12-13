@@ -182,14 +182,14 @@ jobs:
           MAX_ATTEMPTS=5
 
           echo "Deleting ALBs..."
-          aws elbv2 describe-load-balancers --output json | jq -r '.LoadBalancers[] | select(.LoadBalancerName | startswith("k8s-")) | .LoadBalancerArn' \
+          aws elbv2 describe-load-balancers --output json | jq -r '.LoadBalancers[] | select(.LoadBalancerName | startswith("dev-dp-001-")) | .LoadBalancerArn' \
           | while read -r arn; do
               [[ -z "$arn" ]] && continue
               aws elbv2 delete-load-balancer --load-balancer-arn "$arn"
             done
 
           echo "Deleting Target Groups..."
-          aws elbv2 describe-target-groups --output json | jq -r '.TargetGroups[] | select(.TargetGroupName | startswith("k8s-")) | .TargetGroupArn' | \
+          aws elbv2 describe-target-groups --output json | jq -r '.TargetGroups[] | select(.TargetGroupName | startswith("dev-dp-001-")) | .TargetGroupArn' | \
           while read -r tg; do
             [[ -z "$tg" ]] && continue
             ATTEMPTS=0
