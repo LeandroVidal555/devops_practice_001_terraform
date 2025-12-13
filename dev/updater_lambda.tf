@@ -20,7 +20,7 @@ resource "aws_iam_role" "lambda_role" {
 
 resource "aws_iam_policy" "lambda_policy" {
   name   = "${local.updater_lambda.lambda_name}-policy"
-  policy = file("${path.module}/resources/updater_lambda/updater_lambda.json")
+  policy = file("${path.module}/resources/updater_lambda/updater_lambda_policy.json")
 }
 
 resource "aws_iam_role_policy_attachment" "attach" {
@@ -62,7 +62,7 @@ resource "aws_lambda_function" "updater" {
 #####################
 # EventBridge
 #####################
-resource "aws_cloudwatch_event_rule" "app_alb_created" {
+resource "aws_cloudwatch_event_rule" "alb_created" {
   name        = local.updater_lambda.lambda_name
   description = "Trigger CFront/R53 updater when an ALB is created"
 
