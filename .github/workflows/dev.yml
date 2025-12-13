@@ -263,7 +263,10 @@ jobs:
             done
           fi
 
-      - name: Reset destroy flag
+      - name: Reset flags
         env:
           GH_TOKEN: ${{ secrets.TF_GA_PAT }}
-        run: gh variable set DESTROY_TF_DEV --body "false" --repo "${{ github.repository }}" 
+        run: |
+          gh variable set DESTROY_TF_DEV --body "false" --repo "${{ github.repository }}"
+          gh variable set APPS_DEPLOYED_DEV --body "false" --repo "${{ github.repository }}"
+ 
