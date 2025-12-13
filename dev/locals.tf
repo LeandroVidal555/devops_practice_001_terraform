@@ -62,7 +62,8 @@ locals {
     api_alb_origin_id = "app-alb"
   }
   updater_lambda = {
-    lambda_name  = "${var.env}-${var.common_prefix}-updater-lambda"
-    alb_app_name = "${var.env}-${var.common_prefix}-app-alb"
+    lambda_name    = "${var.env}-${var.common_prefix}-updater-lambda"
+    alb_app_name   = "${var.env}-${var.common_prefix}-app-alb"
+    python_runtime = "python3.12"
   }
 }

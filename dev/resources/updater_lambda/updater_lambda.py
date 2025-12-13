@@ -59,7 +59,7 @@ def handler(event, context):
     # CASE COVERED: A
 
     distribution_alias = os.environ["DISTRIBUTION_ALIAS"]
-    origin_id          = os.environ.get("ORIGIN_ID")
+    origin_id          = os.environ["ORIGIN_ID"]
     alb_name           = os.environ["ALB_NAME"]
 
     alb_dns         = _get_alb_dns_by_name(alb_name)

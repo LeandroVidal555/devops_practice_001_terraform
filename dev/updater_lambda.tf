@@ -41,7 +41,7 @@ resource "aws_lambda_function" "updater" {
   function_name = local.updater_lambda.lambda_name
   role          = aws_iam_role.lambda_role.arn
 
-  runtime = "python3.14"
+  runtime = local.updater_lambda.python_runtime
   handler = "updater_lambda.handler"
 
   filename         = data.archive_file.lambda_zip.output_path
