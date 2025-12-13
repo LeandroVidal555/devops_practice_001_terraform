@@ -72,10 +72,8 @@ resource "aws_cloudwatch_event_rule" "alb_created" {
     detail = {
       eventSource = ["elasticloadbalancing.amazonaws.com"]
       eventName   = ["CreateLoadBalancer"]
-      responseElements = {
-        loadBalancers = {
-          loadBalancerName = [local.updater_lambda.alb_app_name]
-        }
+      requestParameters = {
+        name = [local.updater_lambda.alb_app_name]
       }
     }
   })
