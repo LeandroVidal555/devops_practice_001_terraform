@@ -22,7 +22,7 @@ resource "aws_cloudfront_distribution" "site" {
 
   origin {
     domain_name = "UNDEFINED.us-east-2.elb.amazonaws.com"
-    origin_id   = "api-alb"
+    origin_id   = var.api_alb_origin_id
 
     custom_origin_config {
       http_port              = 80
@@ -44,7 +44,7 @@ resource "aws_cloudfront_distribution" "site" {
 
   ordered_cache_behavior {
     path_pattern     = "/api/*"
-    target_origin_id = "api-alb"
+    target_origin_id = var.api_alb_origin_id
 
     allowed_methods = ["GET", "HEAD", "OPTIONS"]
     cached_methods  = ["GET", "HEAD"]
@@ -70,8 +70,6 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   lifecycle {
-    ignore_changes = [
-      origin
-    ]
+    ignore_changes = [origin]
   }
 }

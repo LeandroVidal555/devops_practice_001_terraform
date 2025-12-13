@@ -58,6 +58,11 @@ locals {
     }
   }
   app_infra = {
-    site_url = "${var.common_prefix}.${var.env}.${var.tl_domain}"
+    site_url          = "${var.common_prefix}.${var.env}.${var.tl_domain}"
+    api_alb_origin_id = "app-alb"
+  }
+  updater_lambda = {
+    lambda_name  = "${var.env}-${var.common_prefix}-updater-lambda"
+    alb_app_name = "${var.env}-${var.common_prefix}-app-alb"
   }
 }
