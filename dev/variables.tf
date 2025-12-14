@@ -2,7 +2,10 @@
 variable "aws_region" { type = string }
 variable "common_prefix" { type = string }
 variable "env" { type = string }
+
+#### DNS ####
 variable "tl_domain" { type = string }
+variable "hosted_zone_id_pub" { type = string }
 
 #### VPC ####
 variable "vpc_cidr" { type = string }

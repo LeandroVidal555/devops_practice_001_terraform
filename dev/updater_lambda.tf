@@ -55,6 +55,9 @@ resource "aws_lambda_function" "updater" {
       DISTRIBUTION_ALIAS = local.app_infra.site_url
       ORIGIN_ID          = local.app_infra.api_alb_origin_id
       ALB_NAME           = local.updater_lambda.alb_app_name
+      HOSTED_ZONE_ID_PUB = var.hosted_zone_id_pub
+      ALB_RECORD_NAMES   = local.updater_lambda.alb_domains
+      CFRONT_ZONE_ID     = local.updater_lambda.cfront_zone_id
     }
   }
 }
@@ -63,7 +66,7 @@ resource "aws_lambda_function" "updater" {
 # EventBridge
 #####################
 resource "aws_cloudwatch_event_rule" "alb_created" {
-  name        = local.updater_lambda.lambda_name #"${local.updater_lambda.lambda_name}-alb"
+  name        = "${local.updater_lambda.lambda_name}-alb"
   description = "Trigger CFront/R53 updater when an ALB is created"
 
   event_pattern = jsonencode({
@@ -73,7 +76,10 @@ resource "aws_cloudwatch_event_rule" "alb_created" {
       eventSource = ["elasticloadbalancing.amazonaws.com"]
       eventName   = ["CreateLoadBalancer"]
       requestParameters = {
-        name = [local.updater_lambda.alb_app_name]
+        name = [
+          local.updater_lambda.alb_app_name,
+          local.updater_lambda.alb_admin_name
+        ]
       }
     }
   })
@@ -86,7 +92,7 @@ resource "aws_cloudwatch_event_target" "invoke_lambda" {
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
-  statement_id  = "AllowEventBridgeInvoke" #"AllowEventBridgeInvokeALB"
+  statement_id  = "AllowEventBridgeInvokeALB"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.updater.function_name
   principal     = "events.amazonaws.com"
@@ -102,7 +108,7 @@ resource "aws_cloudwatch_event_rule" "cloudfront_created" {
     detail-type = ["AWS API Call via CloudTrail"]
     detail = {
       eventSource = ["cloudfront.amazonaws.com"]
-      eventName   = ["CreateDistribution"]
+      eventName   = ["CreateDistributionWithTags"]
     }
   })
 }

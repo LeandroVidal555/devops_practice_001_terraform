@@ -64,6 +64,9 @@ locals {
   updater_lambda = {
     lambda_name    = "${var.env}-${var.common_prefix}-updater-lambda"
     alb_app_name   = "${var.env}-${var.common_prefix}-app-alb"
+    alb_admin_name = "${var.env}-${var.common_prefix}-admin-alb"
+    alb_domains    = "argo.${var.env}.${var.tl_domain},grafana.${var.env}.${var.tl_domain}"
+    cfront_zone_id = "Z2FDTNDATAQYW2"
     python_runtime = "python3.12"
   }
 }
