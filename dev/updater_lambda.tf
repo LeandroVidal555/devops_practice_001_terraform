@@ -19,7 +19,7 @@ resource "aws_iam_role" "lambda_role" {
 }
 
 resource "aws_iam_policy" "lambda_policy" {
-  name   = "${local.updater_lambda.lambda_name}-policy"
+  name = "${local.updater_lambda.lambda_name}-policy"
   policy = templatefile(
     "${path.module}/resources/updater_lambda/cloudtrail_bucket_policy.json",
     {
