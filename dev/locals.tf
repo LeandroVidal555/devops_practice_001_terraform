@@ -68,5 +68,6 @@ locals {
     alb_domains    = "argo.${var.env}.${var.tl_domain},grafana.${var.env}.${var.tl_domain}"
     cfront_zone_id = "Z2FDTNDATAQYW2"
     python_runtime = "python3.12"
+    bucket_name    = "${var.env}-${var.common_prefix}-cloudtrail"
   }
 }

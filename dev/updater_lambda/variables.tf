@@ -1,0 +1,10 @@
+variable "lambda_name" { type = string }
+variable "alb_app_name" { type = string }
+variable "alb_admin_name" { type = string }
+variable "alb_domains" { type = string }
+variable "cfront_zone_id" { type = string }
+variable "python_runtime" { type = string }
+variable "bucket_name" { type = string }
+variable "hosted_zone_id_pub" { type = string }
+variable "site_url" { type = string }
+variable "api_alb_origin_id" { type = string }

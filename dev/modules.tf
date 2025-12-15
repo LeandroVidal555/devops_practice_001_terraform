@@ -52,10 +52,24 @@ module "monitoring" {
   promtail_chart_version = var.promtail_chart_version
 }
 
+module "updater_lambda" {
+  source = "./updater_lambda"
+
+  lambda_name        = local.updater_lambda.lambda_name
+  alb_app_name       = local.updater_lambda.alb_app_name
+  alb_admin_name     = local.updater_lambda.alb_admin_name
+  alb_domains        = local.updater_lambda.alb_domains
+  cfront_zone_id     = local.updater_lambda.cfront_zone_id
+  python_runtime     = local.updater_lambda.python_runtime
+  bucket_name        = local.updater_lambda.bucket_name
+  hosted_zone_id_pub = var.hosted_zone_id_pub
+  site_url           = local.app_infra.site_url
+  api_alb_origin_id  = local.app_infra.api_alb_origin_id
+}
+
 module "app_infra" {
   depends_on = [
-    aws_lambda_function.updater,
-    aws_cloudtrail.eventbridge_mgmt
+    module.updater_lambda
   ]
 
   source = "./app_infra"
