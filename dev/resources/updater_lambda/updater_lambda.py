@@ -63,7 +63,7 @@ def _update_route53_record(hosted_zone_id: str, record_names: str, target_zone_i
                             "Type": "A",
                             "AliasTarget": {
                                 "HostedZoneId": target_zone_id,
-                                "DNSName": "dualstack." + target_dns,
+                                "DNSName": target_dns,
                                 "EvaluateTargetHealth": False
                             }
                         }
@@ -77,14 +77,15 @@ def handler(event, context):
     print("Event data:", json.dumps(event) )
 
     if event["detail"]["eventName"] == "CreateDistributionWithTags":
-        print("CASE B: Created CloudFront Distribution. Updating Route 53...")
-        hosted_zone_id = os.environ["HOSTED_ZONE_ID_PUB"]
-        record_names   = os.environ["DISTRIBUTION_ALIAS"].split(",")
-        target_zone_id = os.environ["CFRONT_ZONE_ID"]
-        target_dns     = event["detail"]["responseElements"]["distribution"]["domainName"]
+        if "dp-001.dev.lmv-dev.top" in event["detail"]["responseElements"]["distribution"]["distributionConfig"]["aliases"]["items"]:
+            print("CASE B: Created CloudFront Distribution. Updating Route 53...")
+            hosted_zone_id = os.environ["HOSTED_ZONE_ID_PUB"]
+            record_names   = os.environ["DISTRIBUTION_ALIAS"].split(",")
+            target_zone_id = os.environ["CFRONT_ZONE_ID"]
+            target_dns     = event["detail"]["responseElements"]["distribution"]["domainName"]
 
-        _update_route53_record(hosted_zone_id, record_names, target_zone_id, target_dns)
-        print(f"R53 records {record_names} updated!")
+            _update_route53_record(hosted_zone_id, record_names, target_zone_id, target_dns)
+            print(f"R53 records {record_names} updated!")
 
     elif event["detail"]["eventName"] == "CreateLoadBalancer":
         if event["detail"]["requestParameters"]["name"] == "dev-dp-001-app-alb":
@@ -106,7 +107,7 @@ def handler(event, context):
             target_zone_id = event["detail"]["responseElements"]["loadBalancers"][0]["canonicalHostedZoneId"]
             target_dns     = event["detail"]["responseElements"]["loadBalancers"][0]["dNSName"]
 
-            _update_route53_record(hosted_zone_id, record_names, target_zone_id, target_dns)
+            _update_route53_record(hosted_zone_id, record_names, target_zone_id, f"dualstack.{target_dns}")
             print(f"R53 records {record_names} updated!")
 
     else:
