@@ -32,7 +32,7 @@ resource "aws_s3_bucket_policy" "cloudtrail" {
   bucket = aws_s3_bucket.cloudtrail.id
 
   policy = templatefile(
-    "${path.module}/resources/updater_lambda/cloudtrail_bucket_policy.json",
+    "${path.module}/../resources/updater_lambda/cloudtrail_bucket_policy.json",
     {
       bucket_arn = aws_s3_bucket.cloudtrail.arn
       account_id = data.aws_caller_identity.current.account_id
