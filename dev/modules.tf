@@ -58,4 +58,6 @@ module "app_infra" {
   acm_cert_arn      = var.acm_cert_arn
   site_url          = local.app_infra.site_url
   api_alb_origin_id = local.app_infra.api_alb_origin_id
+
+  depends_on = [ aws_lambda_function.updater ]
 }
