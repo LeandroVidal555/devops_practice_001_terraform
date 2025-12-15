@@ -134,7 +134,7 @@ resource "aws_lambda_permission" "allow_eventbridge_cf_create" {
 }
 
 
-# Couudtrail trails NEEDS a write target
+# Cloudtrail trails NEEDS a write target
 # Cheapest storage target: an S3 bucket with short retention
 resource "aws_s3_bucket" "cloudtrail" {
   bucket        = "${var.env}-${var.common_prefix}-cloudtrail"

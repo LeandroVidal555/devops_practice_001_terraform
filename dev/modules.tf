@@ -53,7 +53,10 @@ module "monitoring" {
 }
 
 module "app_infra" {
-  depends_on = [aws_lambda_function.updater]
+  depends_on = [
+    aws_lambda_function.updater,
+    aws_cloudtrail.eventbridge_mgmt
+  ]
 
   source = "./app_infra"
 
