@@ -32,7 +32,7 @@ resource "helm_release" "karpenter" {
     yamlencode({
       settings = {
         clusterName       = module.eks.cluster_name
-        interruptionQueue = aws_sqs_queue.karpenter_interruption.name
+        interruptionQueue = aws_sqs_queue.karpenter_irq.name
       }
 
       serviceAccount = {
@@ -62,7 +62,7 @@ resource "helm_release" "karpenter" {
     aws_ec2_tag.karpenter_subnet_discovery,
     aws_ec2_tag.karpenter_node_sg_discovery,
     aws_cloudwatch_event_target.karpenter_scheduled_change,
-    aws_cloudwatch_event_target.karpenter_spot_interruption,
+    aws_cloudwatch_event_target.karpenter_spot_irq,
     aws_cloudwatch_event_target.karpenter_rebalance,
     aws_cloudwatch_event_target.karpenter_instance_state_change,
   ]
