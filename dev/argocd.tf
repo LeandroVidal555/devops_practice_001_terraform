@@ -4,7 +4,7 @@ resource "kubernetes_namespace_v1" "argocd" {
 
 resource "helm_release" "argocd" {
   depends_on = [
-    module.mng_workers,
+    module.mng_bootstrap,
     kubernetes_namespace_v1.argocd,
     helm_release.aws_load_balancer_controller # avoid race condition
   ]

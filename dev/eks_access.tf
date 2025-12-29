@@ -18,11 +18,11 @@ resource "aws_eks_access_policy_association" "admin_roles_policies" {
   }
 }
 
-resource "aws_eks_access_entry" "worker_nodes" {
-  depends_on = [aws_iam_role.worker_nodes_role]
+resource "aws_eks_access_entry" "bootstrap_nodes" {
+  depends_on = [aws_iam_role.bootstrap_nodes_role]
 
   cluster_name  = module.eks.cluster_name
-  principal_arn = aws_iam_role.worker_nodes_role.arn
+  principal_arn = aws_iam_role.bootstrap_nodes_role.arn
   type          = "EC2_LINUX"
 }
 
