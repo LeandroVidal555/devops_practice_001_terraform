@@ -33,4 +33,4 @@ loki_chart_version               = "6.46.0"
 promtail_chart_version           = "6.17.1"
 
 #### KARPENTER ####
-karpenter_chart_version = "1.8.3"
+karpenter_chart_version = "0.16.3"
