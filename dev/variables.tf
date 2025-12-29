@@ -47,3 +47,6 @@ variable "deploy_monitoring" {
   type    = bool
   default = false
 }
+
+#### KARPENTER ####
+variable "karpenter_chart_version" { type = string }

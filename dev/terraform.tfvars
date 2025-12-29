@@ -31,3 +31,6 @@ node_exporter_chart_version      = "4.49.1"
 grafana_chart_version            = "10.1.4"
 loki_chart_version               = "6.46.0"
 promtail_chart_version           = "6.17.1"
+
+#### KARPENTER ####
+karpenter_chart_version = "0.16.3"

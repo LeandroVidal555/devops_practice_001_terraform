@@ -10,13 +10,13 @@ locals {
     name                    = "${var.env}-${var.common_prefix}-cluster"
     endpoint_private_access = true
     cluster_version         = var.cluster_version
-    capacity_type           = "SPOT"
+    capacity_type           = "ON_DEMAND"
     instance_types          = ["t3a.medium", "t3.medium"]
-    min_size                = 3
-    desired_size            = 3
-    max_size                = 5
+    min_size                = 1
+    desired_size            = 1
+    max_size                = 2
     ami_type                = "AL2023_x86_64_STANDARD"
-    disk_size               = 20
+    disk_size               = 50
     admin_roles = [
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_${var.admin_sso_role_hash}",
       "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.env}-${var.common_prefix}-bastion-role"
@@ -69,5 +69,9 @@ locals {
     cfront_zone_id = "Z2FDTNDATAQYW2"
     python_runtime = "python3.12"
     bucket_name    = "${var.env}-${var.common_prefix}-cloudtrail"
+  }
+  karpenter = {
+    namespace       = "kube-system"
+    service_account = "karpenter"
   }
 }
