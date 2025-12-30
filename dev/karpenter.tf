@@ -52,7 +52,6 @@ resource "helm_release" "karpenter" {
   depends_on = [
     module.mng_bootstrap,
     aws_eks_access_entry.karpenter_nodes,
-    aws_ec2_tag.karpenter_subnet_discovery,
     aws_ec2_tag.karpenter_node_sg_discovery,
     aws_cloudwatch_event_target.karpenter_scheduled_change,
     aws_cloudwatch_event_target.karpenter_spot_irq,
