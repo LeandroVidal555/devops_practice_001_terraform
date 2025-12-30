@@ -11,7 +11,6 @@ resource "aws_ec2_tag" "karpenter_node_sg_discovery" {
   value       = module.eks.cluster_name
 }
 
-
 resource "helm_release" "karpenter" {
   name             = "karpenter"
   namespace        = local.karpenter.namespace
