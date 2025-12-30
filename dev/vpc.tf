@@ -13,13 +13,14 @@ module "vpc" {
   intra_subnets   = var.isolated_subnet_cidrs
 
   public_subnet_tags = {
-    "kubernetes.io/role/elb"                          = "1"
-    "kubernetes.io/cluster/${local.eks_cluster.name}" = "shared"
+    "kubernetes.io/role/elb"                          = "1" # ALBC
+    "kubernetes.io/cluster/${local.eks_cluster.name}" = "shared" # ALBC
   }
 
   private_subnet_tags = {
-    "kubernetes.io/role/internal-elb"                 = "1"
-    "kubernetes.io/cluster/${local.eks_cluster.name}" = "shared"
+    "kubernetes.io/role/internal-elb"                 = "1" # ALBC
+    "kubernetes.io/cluster/${local.eks_cluster.name}" = "shared" # ALBC
+    "karpenter.sh/discovery"                          = local.eks_cluster.name # Karpenter
   }
 
   enable_nat_gateway   = true
