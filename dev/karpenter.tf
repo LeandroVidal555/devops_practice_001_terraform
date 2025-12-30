@@ -4,14 +4,7 @@ data "aws_iam_openid_connect_provider" "eks" {
   arn = module.eks.oidc_provider_arn
 }
 
-# Subnet and node tagging for discovery
-resource "aws_ec2_tag" "karpenter_subnet_discovery" {
-  for_each    = toset(module.vpc.private_subnets)
-  resource_id = each.value
-  key         = "karpenter.sh/discovery"
-  value       = module.eks.cluster_name
-}
-
+# Node SG tagging for discovery
 resource "aws_ec2_tag" "karpenter_node_sg_discovery" {
   resource_id = module.eks.node_security_group_id
   key         = "karpenter.sh/discovery"
