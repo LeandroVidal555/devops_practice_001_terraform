@@ -4,7 +4,7 @@ resource "helm_release" "vmagent" {
   name       = "vmagent"
   chart      = "victoria-metrics-agent"
   repository = "https://victoriametrics.github.io/helm-charts/"
-  namespace  = kubernetes_namespace_v1.monitoring.metadata[0].name
+  namespace  = var.monitoring_namespace
   version    = var.vmagent_chart_version
 
   values = [templatefile("${var.values_path}/vmagent.yml", {

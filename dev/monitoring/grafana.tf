@@ -7,7 +7,7 @@ resource "helm_release" "grafana" {
   name       = "grafana"
   chart      = "grafana"
   repository = "https://grafana.github.io/helm-charts"
-  namespace  = kubernetes_namespace_v1.monitoring.metadata[0].name
+  namespace  = var.monitoring_namespace
   version    = var.grafana_chart_version
 
   values = [templatefile("${var.values_path}/grafana.yml", {

@@ -16,6 +16,10 @@ module "eks" {
 
   enable_irsa = true
 
+  node_security_group_tags = {
+    "karpenter.sh/discovery" = local.eks_cluster.name
+  }
+
   # Core add-ons (latest)
   addons = {
     kube-proxy = {

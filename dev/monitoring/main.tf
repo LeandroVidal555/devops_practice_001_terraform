@@ -1,7 +1,3 @@
-resource "kubernetes_namespace_v1" "monitoring" {
-  metadata { name = var.monitoring_namespace }
-}
-
 resource "kubernetes_priority_class_v1" "daemon_critical" {
   metadata {
     name = "daemon-critical"
