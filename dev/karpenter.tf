@@ -14,7 +14,6 @@ resource "helm_release" "karpenter" {
     aws_iam_role_policy_attachment.karpenter_controller,
     module.mng_bootstrap,
     aws_eks_access_entry.karpenter_nodes,
-    aws_ec2_tag.karpenter_node_sg_discovery,
     aws_cloudwatch_event_target.karpenter_scheduled_change,
     aws_cloudwatch_event_target.karpenter_spot_irq,
     aws_cloudwatch_event_target.karpenter_rebalance,
