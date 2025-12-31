@@ -45,7 +45,7 @@ resource "helm_release" "aws_load_balancer_controller" {
     aws_eks_addon.coredns
   ]
 
-  name       = "albcont"
+  name       = "${var.env}-${var.common_prefix}-albcont" # change to: "albcont"
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-load-balancer-controller"
   version    = var.albcont_chart_version
