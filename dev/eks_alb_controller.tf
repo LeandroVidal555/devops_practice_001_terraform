@@ -52,8 +52,8 @@ resource "helm_release" "aws_load_balancer_controller" {
   namespace  = "kube-system"
 
   # Robust deployments
-  atomic            = true
-  cleanup_on_fail   = true
+  atomic            = false # true
+  cleanup_on_fail   = false # true
   dependency_update = true
   wait              = true
   #replace = true
