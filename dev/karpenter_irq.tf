@@ -1,3 +1,5 @@
+# SQS ####
+##########
 resource "aws_sqs_queue" "karpenter_irq" {
   name                      = module.eks.cluster_name
   message_retention_seconds = 300
@@ -37,6 +39,8 @@ resource "aws_sqs_queue_policy" "karpenter_irq" {
   policy    = data.aws_iam_policy_document.karpenter_irq_queue.json
 }
 
+# EventBridge ####
+##################
 resource "aws_cloudwatch_event_rule" "karpenter_scheduled_change" {
   name          = "${module.eks.cluster_name}-karpenter-scheduled-change"
   event_pattern = jsonencode({ source = ["aws.health"], "detail-type" = ["AWS Health Event"] })
@@ -44,7 +48,7 @@ resource "aws_cloudwatch_event_rule" "karpenter_scheduled_change" {
 
 resource "aws_cloudwatch_event_rule" "karpenter_spot_irq" {
   name          = "${module.eks.cluster_name}-karpenter-spot-irq"
-  event_pattern = jsonencode({ source = ["aws.ec2"], "detail-type" = ["EC2 Spot Instance irq Warning"] })
+  event_pattern = jsonencode({ source = ["aws.ec2"], "detail-type" = ["EC2 Spot Instance Interruption Warning"] })
 }
 
 resource "aws_cloudwatch_event_rule" "karpenter_rebalance" {

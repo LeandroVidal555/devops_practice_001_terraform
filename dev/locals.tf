@@ -11,10 +11,10 @@ locals {
     endpoint_private_access = true
     cluster_version         = var.cluster_version
     capacity_type           = "ON_DEMAND"
-    instance_types          = ["t3a.medium", "t3.medium"]
-    min_size                = 1
-    desired_size            = 1
-    max_size                = 2
+    instance_types          = ["t3a.small", "t3.small"] # 8 enis # ["t3a.small", "t3.small"] # 17 enis
+    min_size                = 3
+    desired_size            = 3
+    max_size                = 3
     ami_type                = "AL2023_x86_64_STANDARD"
     disk_size               = 50
     admin_roles = [
@@ -71,7 +71,6 @@ locals {
     bucket_name    = "${var.env}-${var.common_prefix}-cloudtrail"
   }
   karpenter = {
-    namespace       = "kube-system"
     service_account = "karpenter"
   }
 }

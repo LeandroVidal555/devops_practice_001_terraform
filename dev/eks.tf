@@ -20,34 +20,17 @@ module "eks" {
   addons = {
     kube-proxy = {
       most_recent = true
-      configuration_values = jsonencode({
-        tolerations = [{
-          key      = "dedicated"
-          operator = "Equal"
-          value    = "system"
-          effect   = "NoSchedule"
-        }]
-      })
     }
 
     vpc-cni = {
       most_recent    = true
       before_compute = true
-      configuration_values = jsonencode({
-        tolerations = [{
-          key      = "dedicated"
-          operator = "Equal"
-          value    = "system"
-          effect   = "NoSchedule"
-        }]
-      })
     }
   }
 
   # Let the creator be cluster admin
   enable_cluster_creator_admin_permissions = true
 }
-
 
 
 # IAM role that EC2 instances in the node group will assume
@@ -81,7 +64,13 @@ resource "aws_iam_role_policy_attachment" "bootstrap_nodes_policies" {
   policy_arn = each.key
 }
 
-# System Bootstrap node group
+
+# System Bootstrap managed node group
+# This is needed because Karpenter is the service that provisions the worker nodes, 
+#   so there has to be a first set of nodes that lets Karpenter and other Kubernetes system services run.
+# After this Terraform config is deployed, GA applies Karpenter's manifests before apps/monitoring,
+#   so the actual worker nodes start being created to provide capacity.
+# In the end, the bootstrap nodes are cordoned, drained and deleted.
 module "mng_bootstrap" {
   depends_on = [aws_eks_access_entry.bootstrap_nodes]
 
@@ -111,16 +100,8 @@ module "mng_bootstrap" {
   disk_size = local.eks_cluster.disk_size
 
   labels = {
-    node-role = "bootstrap"
-    karpenter = "false"
-  }
-
-  taints = {
-    system = {
-      key    = "dedicated"
-      value  = "system"
-      effect = "NO_SCHEDULE"
-    }
+    node-purpose = "bootstrap"
+    karpenter    = "false"
   }
 
   update_config = {
@@ -134,104 +115,11 @@ module "mng_bootstrap" {
   }
 }
 
-
-
-
-
-/*
-# IAM role that EC2 instances in the node group will assume
-resource "aws_iam_role" "worker_nodes_role" {
-  name = "${var.env}-${var.common_prefix}-worker-node-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Service = "ec2.amazonaws.com"
-        }
-        Action = "sts:AssumeRole"
-      }
-    ]
-  })
-}
-
-# Attach the three managed policies required for EKS nodes
-resource "aws_iam_role_policy_attachment" "worker_nodes_policies" {
-  for_each = toset([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ])
-
-  role       = aws_iam_role.worker_nodes_role.name
-  policy_arn = each.key
-}
-
-# Separate managed node group(s)
-module "mng_workers" {
-  depends_on = [aws_eks_access_entry.worker_nodes]
-
-  source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
-  version = "21.6.1"
-
-  name               = "workers"
-  kubernetes_version = local.eks_cluster.cluster_version
-
-  cluster_name         = module.eks.cluster_name
-  cluster_service_cidr = module.eks.cluster_service_cidr
-  subnet_ids           = module.vpc.private_subnets
-
-  create_iam_role = false
-  iam_role_arn    = aws_iam_role.worker_nodes_role.arn
-
-  vpc_security_group_ids = [module.eks.node_security_group_id]
-
-  capacity_type  = local.eks_cluster.capacity_type
-  instance_types = local.eks_cluster.instance_types
-
-  min_size     = local.eks_cluster.min_size
-  desired_size = local.eks_cluster.desired_size
-  max_size     = local.eks_cluster.max_size
-
-  ami_type  = local.eks_cluster.ami_type
-  disk_size = local.eks_cluster.disk_size
-
-  labels = {
-    workload = "general_workers"
-  }
-
-  metadata_options = {
-    http_put_response_hop_limit = 2 # reach the Instance Metadata Service (IMDS) when needed (it’s usually 1 hop from the pod → node, then 1 hop node → IMDS), so 2 keeps it working.
-  }
-
-  timeouts = {
-    create = "15m" # default is 60m
-    update = "15m"
-    delete = "15m"
-  }
-} */
-
 resource "aws_eks_addon" "coredns" {
   depends_on = [module.mng_bootstrap] # ensure nodes exist first
 
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
-
-
-  configuration_values = jsonencode({
-    nodeSelector = {
-      "node-role" = "bootstrap"
-    }
-    tolerations = [{
-      key      = "dedicated"
-      operator = "Equal"
-      value    = "system"
-      effect   = "NoSchedule"
-    }]
-  })
 }
 
 resource "helm_release" "metrics_server" {
@@ -250,13 +138,6 @@ resource "helm_release" "metrics_server" {
     {
       name  = "args[0]"
       value = "--kubelet-preferred-address-types=InternalIP\\,Hostname\\,ExternalIP"
-    },
-    # pin to bootstrap nodes
-    { name = "nodeSelector.node-role", value = "bootstrap" },
-    # tolerate bootstrap taint
-    { name = "tolerations[0].key", value = "dedicated" },
-    { name = "tolerations[0].operator", value = "Equal" },
-    { name = "tolerations[0].value", value = "system" },
-    { name = "tolerations[0].effect", value = "NoSchedule" }
+    }
   ]
 }

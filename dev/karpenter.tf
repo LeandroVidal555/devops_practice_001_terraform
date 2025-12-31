@@ -11,9 +11,25 @@ resource "aws_ec2_tag" "karpenter_node_sg_discovery" {
   value       = module.eks.cluster_name
 }
 
+resource "kubernetes_namespace_v1" "karpenter" {
+  metadata { name = "karpenter" }
+}
+
 resource "helm_release" "karpenter" {
+  depends_on = [
+    kubernetes_namespace_v1.karpenter,
+    aws_iam_role_policy_attachment.karpenter_controller,
+    module.mng_bootstrap,
+    aws_eks_access_entry.karpenter_nodes,
+    aws_ec2_tag.karpenter_node_sg_discovery,
+    aws_cloudwatch_event_target.karpenter_scheduled_change,
+    aws_cloudwatch_event_target.karpenter_spot_irq,
+    aws_cloudwatch_event_target.karpenter_rebalance,
+    aws_cloudwatch_event_target.karpenter_instance_state_change,
+  ]
+
   name             = "karpenter"
-  namespace        = local.karpenter.namespace
+  namespace        = "karpenter"
   create_namespace = false
 
   repository = "oci://public.ecr.aws/karpenter"
@@ -34,27 +50,6 @@ resource "helm_release" "karpenter" {
           "eks.amazonaws.com/role-arn" = aws_iam_role.karpenter_controller.arn
         }
       }
-
-      tolerations = [{
-        key      = "dedicated"
-        operator = "Equal"
-        value    = "system"
-        effect   = "NoSchedule"
-      }]
-
-      nodeSelector = {
-        node-role = "bootstrap"
-      }
     })
-  ]
-
-  depends_on = [
-    module.mng_bootstrap,
-    aws_eks_access_entry.karpenter_nodes,
-    aws_ec2_tag.karpenter_node_sg_discovery,
-    aws_cloudwatch_event_target.karpenter_scheduled_change,
-    aws_cloudwatch_event_target.karpenter_spot_irq,
-    aws_cloudwatch_event_target.karpenter_rebalance,
-    aws_cloudwatch_event_target.karpenter_instance_state_change,
   ]
 }

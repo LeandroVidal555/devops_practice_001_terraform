@@ -87,13 +87,6 @@ resource "helm_release" "aws_load_balancer_controller" {
     {
       name  = "enableManageBackendSecurityGroupRules"
       value = "true"
-    },
-    # pin to bootstrap nodes
-    { name = "nodeSelector.node-role", value = "bootstrap" },
-    # tolerate bootstrap taint
-    { name = "tolerations[0].key", value = "dedicated" },
-    { name = "tolerations[0].operator", value = "Equal" },
-    { name = "tolerations[0].value", value = "system" },
-    { name = "tolerations[0].effect", value = "NoSchedule" }
+    }
   ]
 }

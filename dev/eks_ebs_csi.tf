@@ -32,26 +32,6 @@ resource "aws_eks_addon" "ebs_csi" {
   cluster_name             = module.eks.cluster_name
   addon_name               = "aws-ebs-csi-driver"
   service_account_role_arn = aws_iam_role.ebs_csi_controller.arn
-
-  configuration_values = jsonencode({
-    controller = {
-      nodeSelector = { "node-role" = "bootstrap" }
-      tolerations = [{
-        key      = "dedicated"
-        operator = "Equal"
-        value    = "system"
-        effect   = "NoSchedule"
-      }]
-    }
-    node = {
-      tolerations = [{
-        key      = "dedicated"
-        operator = "Equal"
-        value    = "system"
-        effect   = "NoSchedule"
-      }]
-    }
-  })
 }
 
 resource "kubernetes_storage_class_v1" "gp3_default" {

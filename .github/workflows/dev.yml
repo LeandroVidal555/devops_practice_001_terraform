@@ -114,6 +114,61 @@ jobs:
           GH_TOKEN: ${{ secrets.TF_GA_PAT }}
         run: gh variable set APPS_DEPLOYED_DEV --body "true" --repo "${{ github.repository }}"
 
+
+
+
+#      - name: Cordon + drain bootstrap nodes
+#        shell: bash
+#        env:
+#          NODEGROUP_NAME: bootstrap
+#        run: |
+#          set -euo pipefail
+#          SELECTOR="eks.amazonaws.com/nodegroup=${NODEGROUP_NAME}"
+
+#          echo "Finding nodes with selector: ${SELECTOR}"
+#          NODES="$(kubectl get nodes -l "${SELECTOR}" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
+
+#          if [ -z "${NODES}" ]; then
+#            echo "No nodes found for nodegroup ${NODEGROUP_NAME}; skipping cordon/drain."
+#            exit 0
+#          fi
+
+#          echo "Cordoning nodes..."
+#          while read -r n; do
+#            [ -n "$n" ] && kubectl cordon "$n"
+#          done <<< "${NODES}"
+
+#          echo "Draining nodes..."
+#          while read -r n; do
+#            [ -n "$n" ] && kubectl drain "$n" \
+#              --ignore-daemonsets \
+#              --delete-emptydir-data \
+#              --grace-period=60 \
+#              --timeout=20m
+#          done <<< "${NODES}"
+
+#      - name: Delete bootstrap managed node group (Terraform target destroy)
+#        shell: bash
+#        env:
+#          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
+#        run: |
+#          set -euo pipefail
+#          terraform init -input=false
+#          terraform workspace select "${TF_WORKSPACE}" || terraform workspace new "${TF_WORKSPACE}"
+#          terraform destroy -auto-approve -target=module.mng_bootstrap
+
+#      - name: Verify bootstrap nodes are gone
+#        shell: bash
+#        env:
+#          NODEGROUP_NAME: bootstrap
+#        run: |
+#          set -euo pipefail
+#          SELECTOR="eks.amazonaws.com/nodegroup=${NODEGROUP_NAME}"
+#          kubectl get nodes -l "${SELECTOR}" || true
+
+
+
+
       - name: Deploy Monitoring Suite
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: |
