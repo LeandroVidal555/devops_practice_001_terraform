@@ -99,6 +99,11 @@ module "mng_bootstrap" {
   ami_type  = local.eks_cluster.ami_type
   disk_size = local.eks_cluster.disk_size
 
+  metadata_options = {
+    http_tokens                 = "required"
+    http_put_response_hop_limit = 2
+  }
+
   labels = {
     node-purpose = "bootstrap"
     karpenter    = "false"
