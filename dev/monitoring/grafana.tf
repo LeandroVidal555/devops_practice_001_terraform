@@ -1,5 +1,8 @@
 resource "helm_release" "grafana" {
-  depends_on = [helm_release.vmagent]
+  depends_on = [
+    helm_release.vmagent,
+    helm_release.helm_release.promtail
+  ]
 
   name       = "grafana"
   chart      = "grafana"

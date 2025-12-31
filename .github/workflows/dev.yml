@@ -79,7 +79,7 @@ jobs:
           APPS_DEPLOYED_DEV: ${{vars.APPS_DEPLOYED_DEV}}
         run:  |
           aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1 || true
-          if kubectl get ns monitoring >/dev/null 2>&1; then
+          if [ "$(kubectl get pods -A -l app.kubernetes.io/name=grafana --no-headers 2>/dev/null | wc -l)" -gt 0 ]; then
             # avoid monitoring destroy
             terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true -var deploy_apps=$APPS_DEPLOYED_DEV
           else
@@ -172,7 +172,7 @@ jobs:
       - name: Deploy Monitoring Suite
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         run: |
-          if kubectl get ns monitoring >/dev/null 2>&1; then
+          if [ "$(kubectl get pods -A -l app.kubernetes.io/name=grafana --no-headers 2>/dev/null | wc -l)" -gt 0 ]; then
             echo "Monitoring already deployed — skipping."
             exit 0
           fi
