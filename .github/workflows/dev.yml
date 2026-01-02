@@ -121,6 +121,7 @@ jobs:
 
       - name: Cordon + Drain bootstrap nodes
         run: |
+          set -euo pipefail
           NODES="$(kubectl get nodes -l "eks.amazonaws.com/nodegroup=bootstrap" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
           if [ -z "${NODES}" ]; then echo "No nodes found for nodegroup bootstrap; skipping cordon+drain."; exit 0; fi
 
@@ -208,8 +209,6 @@ jobs:
         run: |
           terraform apply -input=false -auto-approve \
             -target=module.eks.aws_eks_cluster.this[0] \
-            -target=aws_eks_access_entry.bootstrap_nodes \
-            -target=aws_iam_role.bootstrap_nodes_role \
             -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" \
             -var enable_public_api=true
 
@@ -276,8 +275,8 @@ jobs:
 
       - name: Purge Karpenter resources
         run: |
-          kubectl delete nodepool --all
-          kubectl delete nodeclaim --all
+          kubectl delete nodepool --all --wait=false 
+          kubectl delete nodeclaim --all --wait=false 
 
       - name: Remove usual EKS blockers from TF State
         run: |
@@ -287,7 +286,6 @@ jobs:
             helm_release.argocd \
             helm_release.aws_load_balancer_controller \
             helm_release.metrics_server \
-            module.monitoring[0].kubernetes_namespace_v1.monitoring \
             module.monitoring[0].helm_release.victoria_metrics \
             module.monitoring[0].helm_release.vmagent \
             module.monitoring[0].helm_release.grafana \
