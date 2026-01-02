@@ -208,10 +208,10 @@ jobs:
         run: |
           terraform apply -input=false -auto-approve \
             -target=module.eks.aws_eks_cluster.this[0] \
+            -target=aws_eks_access_entry.bootstrap_nodes \
+            -target=aws_iam_role.bootstrap_nodes_role \
             -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" \
-            -var enable_public_api=true \
-            -target=aws_eks_access_entry.bootstrap_nodes \ # REMOVE
-            -target=aws_iam_role.bootstrap_nodes_role # REMOVE
+            -var enable_public_api=true
 
       - name: Remove ArgoCD finalizer
         if: steps.eks_status.outputs.status == 'DEPLOYED'
