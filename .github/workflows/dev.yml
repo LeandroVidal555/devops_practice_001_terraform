@@ -286,6 +286,11 @@ jobs:
             done
           done
 
+      - name: Purge Karpenter resources
+        run: |
+          kubectl delete nodepool --all
+          kubectl delete nodeclaim --all
+
       - name: Remove usual EKS blockers from TF State
         run: |
           for resource in \
