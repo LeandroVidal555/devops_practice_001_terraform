@@ -18,15 +18,6 @@ resource "aws_eks_access_policy_association" "admin_roles_policies" {
   }
 }
 
-resource "aws_eks_access_entry" "bootstrap_nodes" {
-  count      = var.deploy_apps ? 0 : 1
-  depends_on = [aws_iam_role.bootstrap_nodes_role]
-
-  cluster_name  = module.eks.cluster_name
-  principal_arn = aws_iam_role.bootstrap_nodes_role.arn
-  type          = "EC2_LINUX"
-}
-
 
 resource "aws_security_group_rule" "bastion_access" {
   type                     = "ingress"
