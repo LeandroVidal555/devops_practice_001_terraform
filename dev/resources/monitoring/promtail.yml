@@ -4,6 +4,14 @@ daemonset:
 
 priorityClassName: "${priority_class_name}"
 
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: karpenter.sh/nodepool
+              operator: Exists
+
 extraArgs:
   - -config.expand-env=true
 
