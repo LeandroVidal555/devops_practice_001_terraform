@@ -21,7 +21,7 @@ resource "aws_iam_role" "bootstrap_nodes_role" {
 resource "aws_iam_role_policy_attachment" "bootstrap_nodes_policies" {
   for_each = var.deploy_apps ? toset([]) : local.eks_cluster.bootstrap_policy_arns
 
-  role       = aws_iam_role.bootstrap_nodes_role.name
+  role       = aws_iam_role.bootstrap_nodes_role[0].name
   policy_arn = each.key
 }
 
@@ -84,9 +84,8 @@ module "mng_bootstrap" {
 
 resource "aws_eks_access_entry" "bootstrap_nodes" {
   count      = var.deploy_apps ? 0 : 1
-  depends_on = [aws_iam_role.bootstrap_nodes_role]
 
   cluster_name  = module.eks.cluster_name
-  principal_arn = aws_iam_role.bootstrap_nodes_role.arn
+  principal_arn = aws_iam_role.bootstrap_nodes_role[0].arn
   type          = "EC2_LINUX"
 }
