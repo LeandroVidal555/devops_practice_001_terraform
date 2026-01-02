@@ -39,7 +39,7 @@ module "eks" {
 
 # IAM role that EC2 instances in the node group will assume
 resource "aws_iam_role" "bootstrap_nodes_role" {
-  count = var.deploy_apps ? 0 : 1
+  count = var.deploy_apps ? 0 : 1 # this var is true after the apps were deployed, so bootstap is no longer needed
   name  = "${var.env}-${var.common_prefix}-bootstrap-node-role"
 
   assume_role_policy = jsonencode({
@@ -58,13 +58,7 @@ resource "aws_iam_role" "bootstrap_nodes_role" {
 
 # Attach the managed policies required for EKS nodes
 resource "aws_iam_role_policy_attachment" "bootstrap_nodes_policies" {
-  count = var.deploy_apps ? 0 : 1
-  for_each = toset([
-    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
-    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPullOnly",
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  ])
+  for_each = var.deploy_apps ? toset([]) : local.eks_cluster.bootstrap_policy_arns
 
   role       = aws_iam_role.bootstrap_nodes_role.name
   policy_arn = each.key

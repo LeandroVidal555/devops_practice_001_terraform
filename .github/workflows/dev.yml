@@ -92,8 +92,8 @@ jobs:
           else
             echo "Monitoring suite not deployed."
             terraform plan -input=false -out=tfplan \
-            -var enable_public_api=true \
-            -var deploy_apps=$APPS_DEPLOYED_DEV
+              -var enable_public_api=true \
+              -var deploy_apps=$APPS_DEPLOYED_DEV
           fi
 
       - name: Upload plan full output artifact
