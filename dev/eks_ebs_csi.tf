@@ -27,7 +27,7 @@ resource "aws_iam_role_policy_attachment" "ebs_csi_policy" {
 
 # Addon for dynamic storage creating/binding
 resource "aws_eks_addon" "ebs_csi" {
-  depends_on = [module.aws_eks_addon.coredns] # ensure nodes exist first
+  depends_on = [aws_eks_addon.coredns] # ensure nodes exist first
 
   cluster_name             = module.eks.cluster_name
   addon_name               = "aws-ebs-csi-driver"
