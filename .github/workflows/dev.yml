@@ -132,7 +132,7 @@ jobs:
           terraform destroy -auto-approve \
             -target=module.mng_bootstrap \
             -target=aws_eks_access_entry.bootstrap_nodes \
-            -target=aws_iam_role.bootstrap_nodes_role \
+            -target=aws_iam_role.bootstrap_nodes_role[0] \
             -target=aws_iam_role_policy_attachment.bootstrap_nodes_policies \
 
       - name: Set deploy apps flag # (means Deployment + Bootstrap completed)
