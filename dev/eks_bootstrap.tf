@@ -47,7 +47,7 @@ module "mng_bootstrap" {
   subnet_ids           = module.vpc.private_subnets
 
   create_iam_role = false
-  iam_role_arn    = aws_iam_role.bootstrap_nodes_role.arn
+  iam_role_arn    = aws_iam_role.bootstrap_nodes_role[0].arn
 
   vpc_security_group_ids = [module.eks.node_security_group_id]
 
