@@ -83,7 +83,7 @@ module "mng_bootstrap" {
 }
 
 resource "aws_eks_access_entry" "bootstrap_nodes" {
-  count      = var.deploy_apps ? 0 : 1
+  count = var.deploy_apps ? 0 : 1
 
   cluster_name  = module.eks.cluster_name
   principal_arn = aws_iam_role.bootstrap_nodes_role[0].arn
