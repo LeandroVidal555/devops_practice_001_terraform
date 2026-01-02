@@ -39,7 +39,8 @@ module "eks" {
 
 # IAM role that EC2 instances in the node group will assume
 resource "aws_iam_role" "bootstrap_nodes_role" {
-  name = "${var.env}-${var.common_prefix}-bootstrap-node-role"
+  count = var.deploy_apps ? 0 : 1
+  name  = "${var.env}-${var.common_prefix}-bootstrap-node-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -57,6 +58,7 @@ resource "aws_iam_role" "bootstrap_nodes_role" {
 
 # Attach the managed policies required for EKS nodes
 resource "aws_iam_role_policy_attachment" "bootstrap_nodes_policies" {
+  count = var.deploy_apps ? 0 : 1
   for_each = toset([
     "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
     "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy",
@@ -76,6 +78,7 @@ resource "aws_iam_role_policy_attachment" "bootstrap_nodes_policies" {
 #   so the actual worker nodes start being created to provide capacity.
 # In the end, the bootstrap nodes are cordoned, drained and deleted.
 module "mng_bootstrap" {
+  count      = var.deploy_apps ? 0 : 1
   depends_on = [aws_eks_access_entry.bootstrap_nodes]
 
   source  = "terraform-aws-modules/eks/aws//modules/eks-managed-node-group"
@@ -125,7 +128,7 @@ module "mng_bootstrap" {
 }
 
 resource "aws_eks_addon" "coredns" {
-  depends_on = [module.mng_bootstrap] # ensure nodes exist first
+  depends_on = [module.eks] # warning: addon will have to wait for bootstrap
 
   cluster_name = module.eks.cluster_name
   addon_name   = "coredns"
@@ -133,7 +136,6 @@ resource "aws_eks_addon" "coredns" {
 
 resource "helm_release" "metrics_server" {
   depends_on = [
-    module.mng_bootstrap,
     aws_eks_addon.coredns
   ]
 

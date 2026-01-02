@@ -47,9 +47,6 @@ jobs:
         with:
           terraform_version: 1.13.0
 
-      - name: Detect runner egress IP
-        run: echo "TF_VAR_github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
-
       - name: Init
         run: terraform init -input=false
 
@@ -68,9 +65,16 @@ jobs:
             echo "status=DEPLOYED" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Detect runner egress IP
+        run: echo "TF_VAR_github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" >> $GITHUB_ENV
+
       - name: Make EKS cluster public
         if: steps.eks_status.outputs.status == 'DEPLOYED'
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=true
+        run: |
+          terraform apply -input=false -auto-approve \
+            -target=module.eks.aws_eks_cluster.this[0] \
+            -target=aws_security_group_rule.github_access \
+            -var enable_public_api=true
       
       - name: Plan
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
@@ -80,24 +84,24 @@ jobs:
         run:  |
           aws eks update-kubeconfig --name dev-dp-001-cluster >/dev/null 2>&1 || true
           if [ "$(kubectl get pods -A -l app.kubernetes.io/name=grafana --no-headers 2>/dev/null | wc -l)" -gt 0 ]; then
-            # avoid monitoring destroy
-            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_monitoring=true -var deploy_apps=$APPS_DEPLOYED_DEV
+            echo "Monitoring suite already deployed. Preventing destruction..."
+            terraform plan -input=false -out=tfplan \
+              -var enable_public_api=true \
+              -var deploy_monitoring=true \
+              -var deploy_apps=$APPS_DEPLOYED_DEV
           else
-            terraform plan -input=false -out=tfplan -var enable_public_api=true -var deploy_apps=$APPS_DEPLOYED_DEV
+            echo "Monitoring suite not deployed."
+            terraform plan -input=false -out=tfplan \
+            -var enable_public_api=true \
+            -var deploy_apps=$APPS_DEPLOYED_DEV
           fi
-
-      - name: Plan catch errors
-        if: ${{ failure() && steps.plan.outcome == 'failure' }}
-        run: |
-          set -o pipefail
-          terraform plan -no-color -input=false -var enable_public_api=true 2>&1 | tee tfplan.txt
 
       - name: Upload plan full output artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: terraform-plan
-          path: ${{ env.TF_WORKING_DIR }}/tfplan.txt
+          path: ${{ env.TF_WORKING_DIR }}/tfplan
 
       ###### APPLY
       - name: Apply (with public eks)
@@ -106,65 +110,36 @@ jobs:
 
       - name: Deploy Apps
         if: ${{ vars.APPLY_TF_DEV == 'true' && vars.APPS_DEPLOYED_DEV == 'false' }}
-        run: terraform apply -input=false -auto-approve -target=kubernetes_manifest.argocd_root_app -var enable_public_api=true -var deploy_apps=true
+        run: |
+          terraform apply -input=false -auto-approve \
+            -target=kubernetes_manifest.argocd_root_app \
+            -var enable_public_api=true \
+            -var deploy_apps=true
 
-      - name: Set deploy apps flag
+
+
+
+      - name: Cordon + Drain bootstrap nodes
+        run: |
+          NODES="$(kubectl get nodes -l "eks.amazonaws.com/nodegroup=bootstrap" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
+          if [ -z "${NODES}" ]; then echo "No nodes found for nodegroup bootstrap; skipping cordon+drain."; exit 0; fi
+
+          while read -r n; do [ -n "$n" ] && kubectl cordon "$n"; done <<< "${NODES}"
+          while read -r n; do [ -n "$n" ] && kubectl drain "$n" --ignore-daemonsets --delete-emptydir-data --grace-period=60 --timeout=20m; done <<< "${NODES}"
+
+      - name: Delete bootstrap managed node group (Terraform target destroy)
+        run: |
+          terraform destroy -auto-approve \
+            -target=module.mng_bootstrap \
+            -target=aws_eks_access_entry.bootstrap_nodes \
+            -target=aws_iam_role.bootstrap_nodes_role \
+            -target=aws_iam_role_policy_attachment.bootstrap_nodes_policies \
+
+      - name: Set deploy apps flag # (means Deployment + Bootstrap completed)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
         env:
           GH_TOKEN: ${{ secrets.TF_GA_PAT }}
         run: gh variable set APPS_DEPLOYED_DEV --body "true" --repo "${{ github.repository }}"
-
-
-
-
-#      - name: Cordon + drain bootstrap nodes
-#        shell: bash
-#        env:
-#          NODEGROUP_NAME: bootstrap
-#        run: |
-#          set -euo pipefail
-#          SELECTOR="eks.amazonaws.com/nodegroup=${NODEGROUP_NAME}"
-
-#          echo "Finding nodes with selector: ${SELECTOR}"
-#          NODES="$(kubectl get nodes -l "${SELECTOR}" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
-
-#          if [ -z "${NODES}" ]; then
-#            echo "No nodes found for nodegroup ${NODEGROUP_NAME}; skipping cordon/drain."
-#            exit 0
-#          fi
-
-#          echo "Cordoning nodes..."
-#          while read -r n; do
-#            [ -n "$n" ] && kubectl cordon "$n"
-#          done <<< "${NODES}"
-
-#          echo "Draining nodes..."
-#          while read -r n; do
-#            [ -n "$n" ] && kubectl drain "$n" \
-#              --ignore-daemonsets \
-#              --delete-emptydir-data \
-#              --grace-period=60 \
-#              --timeout=20m
-#          done <<< "${NODES}"
-
-#      - name: Delete bootstrap managed node group (Terraform target destroy)
-#        shell: bash
-#        env:
-#          TF_WORKSPACE: ${{ env.TF_WORKSPACE }}
-#        run: |
-#          set -euo pipefail
-#          terraform init -input=false
-#          terraform workspace select "${TF_WORKSPACE}" || terraform workspace new "${TF_WORKSPACE}"
-#          terraform destroy -auto-approve -target=module.mng_bootstrap
-
-#      - name: Verify bootstrap nodes are gone
-#        shell: bash
-#        env:
-#          NODEGROUP_NAME: bootstrap
-#        run: |
-#          set -euo pipefail
-#          SELECTOR="eks.amazonaws.com/nodegroup=${NODEGROUP_NAME}"
-#          kubectl get nodes -l "${SELECTOR}" || true
 
 
 
@@ -176,11 +151,18 @@ jobs:
             echo "Monitoring already deployed — skipping."
             exit 0
           fi
-          terraform apply -input=false -auto-approve -target=module.monitoring -var enable_public_api=true -var deploy_monitoring=true
+          terraform apply -input=false -auto-approve \
+            -target=module.monitoring \
+            -var enable_public_api=true \
+            -var deploy_monitoring=true
 
       - name: Apply (just make eks private)
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -target=aws_security_group_rule.github_access -var enable_public_api=false
+        run: |
+          terraform apply -input=false -auto-approve \
+            -target=module.eks.aws_eks_cluster.this[0] \
+            -target=aws_security_group_rule.github_access \
+            -var enable_public_api=false
 
       - name: Sync S3 website
         if: ${{ vars.APPLY_TF_DEV == 'true' }}
@@ -223,7 +205,11 @@ jobs:
 
       - name: Make EKS cluster public
         if: steps.eks_status.outputs.status == 'DEPLOYED'
-        run: terraform apply -input=false -auto-approve -target=module.eks.aws_eks_cluster.this[0] -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" -var enable_public_api=true
+        run: |
+          terraform apply -input=false -auto-approve \
+            -target=module.eks.aws_eks_cluster.this[0] \
+            -var "github_actions_egress_cidr=$(curl -s https://checkip.amazonaws.com)/32" \
+            -var enable_public_api=true
 
       - name: Remove ArgoCD finalizer
         if: steps.eks_status.outputs.status == 'DEPLOYED'

@@ -12,13 +12,15 @@ resource "helm_release" "karpenter" {
   depends_on = [
     kubernetes_namespace_v1.karpenter,
     aws_iam_role_policy_attachment.karpenter_controller,
-    module.mng_bootstrap,
     aws_eks_access_entry.karpenter_nodes,
     aws_cloudwatch_event_target.karpenter_scheduled_change,
     aws_cloudwatch_event_target.karpenter_spot_irq,
     aws_cloudwatch_event_target.karpenter_rebalance,
     aws_cloudwatch_event_target.karpenter_instance_state_change,
   ]
+
+  wait    = true # replaces mng_bootstrap dependency
+  timeout = 900
 
   name             = "karpenter"
   namespace        = "karpenter"
