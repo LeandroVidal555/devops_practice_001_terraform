@@ -44,6 +44,14 @@ resource "helm_release" "karpenter" {
           "eks.amazonaws.com/role-arn" = aws_iam_role.karpenter_controller.arn
         }
       }
+
+      # Remove chart default that blocks scheduling on karpenter nodes
+      affinity = null
+
+      # strongly recommended so Karpenter won’t voluntarily disrupt itself
+      podAnnotations = {
+        "karpenter.sh/do-not-disrupt" = "true"
+      }
     })
   ]
 }
