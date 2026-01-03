@@ -275,7 +275,12 @@ jobs:
         run: |
           if kubectl version --request-timeout=5s >/dev/null 2>&1; then
             kubectl delete nodepool --all --wait=false 
-            kubectl delete nodeclaim --all --wait=false 
+            kubectl delete nodeclaim --all --wait=false
+
+            aws ec2 describe-instances \
+                --filters "Name=tag:karpenter.sh/nodepool,Values=*" "Name=tag:kubernetes.io/cluster/dev-dp-001-cluster,Values=owned" \
+                --query "Reservations[].Instances[].InstanceId" --output text \
+              | xargs -r aws ec2 terminate-instances --instance-ids
           else
             echo "Kubernetes API not reachable; skipping Karpenter purge."
             exit 0
