@@ -123,8 +123,8 @@ jobs:
         run: |
           set -euo pipefail
           aws eks update-kubeconfig --name dev-dp-001-cluster
-          
-          NODES="$(kubectl get nodes -l "eks.amazonaws.com/nodegroup=bootstrap" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
+
+          NODES="$(kubectl get nodes -l "node-purpose=bootstrap" -o jsonpath='{range .items[*]}{.metadata.name}{"\n"}{end}')"
           if [ -z "${NODES}" ]; then echo "No nodes found for nodegroup bootstrap; skipping cordon+drain."; exit 0; fi
 
           while read -r n; do [ -n "$n" ] && kubectl cordon "$n"; done <<< "${NODES}"
@@ -276,9 +276,14 @@ jobs:
           done
 
       - name: Purge Karpenter resources
-        run: |
-          kubectl delete nodepool --all --wait=false 
-          kubectl delete nodeclaim --all --wait=false 
+        run:
+          if kubectl version --request-timeout=5s >/dev/null 2>&1; then
+            kubectl delete nodepool --all --wait=false 
+            kubectl delete nodeclaim --all --wait=false 
+          else
+            echo "Kubernetes API not reachable; skipping Karpenter purge."
+            exit 0
+          fi
 
       - name: Remove usual EKS blockers from TF State
         run: |
