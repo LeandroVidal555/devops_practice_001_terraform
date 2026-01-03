@@ -1,4 +1,3 @@
-# main.tf (or observability/main.tf)
 resource "helm_release" "node_exporter" {
   name       = "node-exporter"
   chart      = "prometheus-node-exporter"

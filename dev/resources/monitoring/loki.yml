@@ -64,6 +64,7 @@ loki:
 
 lokiCanary:
   enabled: true
+  priorityClassName: ${priority_class_name}
   affinity:
     nodeAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

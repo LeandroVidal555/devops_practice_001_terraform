@@ -1,10 +1,9 @@
-prometheus-node-exporter:
-  priorityClassName: "${priority_class_name}"
+priorityClassName: "${priority_class_name}"
 
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-          - matchExpressions:
-            - key: karpenter.sh/nodepool
-              operator: Exists
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: karpenter.sh/nodepool
+            operator: Exists
