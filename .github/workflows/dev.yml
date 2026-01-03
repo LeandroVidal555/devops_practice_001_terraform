@@ -276,7 +276,7 @@ jobs:
           done
 
       - name: Purge Karpenter resources
-        run:
+        run: |
           if kubectl version --request-timeout=5s >/dev/null 2>&1; then
             kubectl delete nodepool --all --wait=false 
             kubectl delete nodeclaim --all --wait=false 
