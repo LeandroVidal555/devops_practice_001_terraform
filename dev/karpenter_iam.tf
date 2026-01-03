@@ -293,10 +293,10 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:eks:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster/${module.eks.cluster_name}"
       },
       {
-        Sid      = "AllowProfiles"
+        Sid      = "AllowProfilesKptr"
         Effect   = "Allow"
-        Action   = ["iam:*Profile"]
-        Resource = "*"
+        Action   = ["iam:*Profile*"]
+        Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/karpenter/*"
       }
     ]
   })
