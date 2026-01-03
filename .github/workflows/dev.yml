@@ -283,7 +283,7 @@ jobs:
           aws ec2 describe-instances \
               --filters "Name=tag:karpenter.sh/nodepool,Values=*" "Name=tag:kubernetes.io/cluster/dev-dp-001-cluster,Values=owned" \
               --query "Reservations[].Instances[].InstanceId" --output text \
-            | xargs -r aws ec2 terminate-instances --instance-ids
+            | xargs -r aws ec2 terminate-instances --instance-ids | jq -r '.TerminatingInstances[].InstanceId | "Terminating instance: \(.)"'
 
       - name: Remove usual EKS blockers from TF State
         run: |
