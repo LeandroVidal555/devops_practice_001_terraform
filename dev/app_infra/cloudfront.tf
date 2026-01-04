@@ -21,7 +21,7 @@ resource "aws_cloudfront_distribution" "site" {
   }
 
   origin {
-    domain_name = "UNDEFINED.us-east-2.elb.amazonaws.com"
+    domain_name = "UNDEFINED_DNS.REGION.elb.amazonaws.com"
     origin_id   = var.api_alb_origin_id
 
     custom_origin_config {

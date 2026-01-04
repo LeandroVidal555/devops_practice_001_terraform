@@ -1,6 +1,6 @@
 # This is for instances launched by karpenter, i.e., the actual workers
 resource "aws_iam_role" "karpenter_node" {
-  name = "${module.eks.cluster_name}-karpenter-node-role"
+  name = "${var.cluster_name}-karpenter-node-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -25,11 +25,9 @@ resource "aws_iam_role_policy_attachment" "karpenter_node_policies" {
 }
 
 resource "aws_eks_access_entry" "karpenter_nodes" {
-  cluster_name  = module.eks.cluster_name
+  cluster_name  = var.cluster_name
   principal_arn = aws_iam_role.karpenter_node.arn
   type          = "EC2_LINUX"
-
-  depends_on = [module.eks]
 }
 
 
@@ -46,7 +44,7 @@ data "aws_iam_policy_document" "karpenter_controller_assume" {
 
     principals {
       type        = "Federated"
-      identifiers = [module.eks.oidc_provider_arn]
+      identifiers = [var.oidc_provider_arn]
     }
 
     condition {
@@ -64,13 +62,13 @@ data "aws_iam_policy_document" "karpenter_controller_assume" {
 }
 
 resource "aws_iam_role" "karpenter_controller" {
-  name               = "${module.eks.cluster_name}-karpenter-ctrl-role"
+  name               = "${var.cluster_name}-karpenter-ctrl-role"
   assume_role_policy = data.aws_iam_policy_document.karpenter_controller_assume.json # trust policy
 }
 
 # These are the actual permissions of the controller
 resource "aws_iam_policy" "karpenter_controller" {
-  name = "${module.eks.cluster_name}-karpenter-ctrl-policy"
+  name = "${var.cluster_name}-karpenter-ctrl-policy"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -94,7 +92,7 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:ec2:${var.aws_region}:*:launch-template/*"
         Condition = {
           StringEquals = {
-            "aws:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
+            "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
           }
           StringLike = {
             "aws:ResourceTag/karpenter.sh/nodepool" = "*"
@@ -116,8 +114,8 @@ resource "aws_iam_policy" "karpenter_controller" {
         ]
         Condition = {
           StringEquals = {
-            "aws:RequestTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
-            "aws:RequestTag/eks:eks-cluster-name"                             = module.eks.cluster_name
+            "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
+            "aws:RequestTag/eks:eks-cluster-name"                      = var.cluster_name
           }
           StringLike = {
             "aws:RequestTag/karpenter.sh/nodepool" = "*"
@@ -138,9 +136,9 @@ resource "aws_iam_policy" "karpenter_controller" {
         ]
         Condition = {
           StringEquals = {
-            "aws:RequestTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
-            "aws:RequestTag/eks:eks-cluster-name"                             = module.eks.cluster_name
-            "ec2:CreateAction"                                                = ["RunInstances", "CreateFleet", "CreateLaunchTemplate"]
+            "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
+            "aws:RequestTag/eks:eks-cluster-name"                      = var.cluster_name
+            "ec2:CreateAction"                                         = ["RunInstances", "CreateFleet", "CreateLaunchTemplate"]
           }
           StringLike = {
             "aws:RequestTag/karpenter.sh/nodepool" = "*"
@@ -154,13 +152,13 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:ec2:${var.aws_region}:*:instance/*"
         Condition = {
           StringEquals = {
-            "aws:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
+            "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
           }
           StringLike = {
             "aws:ResourceTag/karpenter.sh/nodepool" = "*"
           }
           StringEqualsIfExists = {
-            "aws:RequestTag/eks:eks-cluster-name" = module.eks.cluster_name
+            "aws:RequestTag/eks:eks-cluster-name" = var.cluster_name
           }
           "ForAllValues:StringEquals" = {
             "aws:TagKeys" = ["eks:eks-cluster-name", "karpenter.sh/nodeclaim", "Name"]
@@ -177,7 +175,7 @@ resource "aws_iam_policy" "karpenter_controller" {
         ]
         Condition = {
           StringEquals = {
-            "aws:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
+            "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
           }
           StringLike = {
             "aws:ResourceTag/karpenter.sh/nodepool" = "*"
@@ -237,9 +235,9 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*"
         Condition = {
           StringEquals = {
-            "aws:RequestTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
-            "aws:RequestTag/eks:eks-cluster-name"                             = module.eks.cluster_name
-            "aws:RequestTag/topology.kubernetes.io/region"                    = var.aws_region
+            "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
+            "aws:RequestTag/eks:eks-cluster-name"                      = var.cluster_name
+            "aws:RequestTag/topology.kubernetes.io/region"             = var.aws_region
           }
           StringLike = {
             "aws:RequestTag/karpenter.k8s.aws/ec2nodeclass" = "*"
@@ -253,11 +251,11 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*"
         Condition = {
           StringEquals = {
-            "aws:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
-            "aws:ResourceTag/topology.kubernetes.io/region"                    = var.aws_region
-            "aws:RequestTag/kubernetes.io/cluster/${module.eks.cluster_name}"  = "owned"
-            "aws:RequestTag/eks:eks-cluster-name"                              = module.eks.cluster_name
-            "aws:RequestTag/topology.kubernetes.io/region"                     = var.aws_region
+            "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
+            "aws:ResourceTag/topology.kubernetes.io/region"             = var.aws_region
+            "aws:RequestTag/kubernetes.io/cluster/${var.cluster_name}"  = "owned"
+            "aws:RequestTag/eks:eks-cluster-name"                       = var.cluster_name
+            "aws:RequestTag/topology.kubernetes.io/region"              = var.aws_region
           }
           StringLike = {
             "aws:ResourceTag/karpenter.k8s.aws/ec2nodeclass" = "*"
@@ -272,8 +270,8 @@ resource "aws_iam_policy" "karpenter_controller" {
         Resource = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:instance-profile/*"
         Condition = {
           StringEquals = {
-            "aws:ResourceTag/kubernetes.io/cluster/${module.eks.cluster_name}" = "owned"
-            "aws:ResourceTag/topology.kubernetes.io/region"                    = var.aws_region
+            "aws:ResourceTag/kubernetes.io/cluster/${var.cluster_name}" = "owned"
+            "aws:ResourceTag/topology.kubernetes.io/region"             = var.aws_region
           }
           StringLike = {
             "aws:ResourceTag/karpenter.k8s.aws/ec2nodeclass" = "*"
@@ -290,7 +288,7 @@ resource "aws_iam_policy" "karpenter_controller" {
         Sid      = "AllowAPIServerEndpointDiscovery"
         Effect   = "Allow"
         Action   = ["eks:DescribeCluster"]
-        Resource = "arn:aws:eks:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster/${module.eks.cluster_name}"
+        Resource = "arn:aws:eks:${var.aws_region}:${data.aws_caller_identity.current.account_id}:cluster/${var.cluster_name}"
       },
       {
         Sid      = "AllowProfilesKptr"

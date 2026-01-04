@@ -78,3 +78,17 @@ module "app_infra" {
   site_url          = local.app_infra.site_url
   api_alb_origin_id = local.app_infra.api_alb_origin_id
 }
+
+module "karpenter" {
+  depends_on = [
+    module.eks
+  ]
+
+  source = "./karpenter"
+
+  aws_region              = var.aws_region
+  karpenter_chart_version = var.karpenter_chart_version
+
+  cluster_name      = module.eks.cluster_name
+  oidc_provider_arn = module.eks.oidc_provider_arn
+}

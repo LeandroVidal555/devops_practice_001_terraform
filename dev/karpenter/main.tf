@@ -1,7 +1,7 @@
 data "aws_partition" "current" {}
 
 data "aws_iam_openid_connect_provider" "eks" {
-  arn = module.eks.oidc_provider_arn
+  arn = var.oidc_provider_arn
 }
 
 resource "kubernetes_namespace_v1" "karpenter" {
@@ -33,7 +33,7 @@ resource "helm_release" "karpenter" {
   values = [
     yamlencode({
       settings = {
-        clusterName       = module.eks.cluster_name
+        clusterName       = var.cluster_name
         interruptionQueue = aws_sqs_queue.karpenter_irq.name
       }
 
