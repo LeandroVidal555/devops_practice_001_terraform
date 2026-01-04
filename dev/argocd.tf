@@ -6,7 +6,7 @@ resource "helm_release" "argocd" {
   depends_on = [
     kubernetes_namespace_v1.argocd,
     helm_release.aws_load_balancer_controller, # avoid race condition
-    helm_release.karpenter                     # ensure there are workload nodes available
+    module.karpenter                           # ensure there are workload nodes available
   ]
 
   name             = "${var.env}-${var.common_prefix}-argocd"
