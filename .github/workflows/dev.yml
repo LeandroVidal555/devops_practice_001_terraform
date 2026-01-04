@@ -274,9 +274,12 @@ jobs:
       - name: Purge Karpenter resources
         run: |
           if kubectl version --request-timeout=5s >/dev/null 2>&1; then
-            kubectl -n karpenter scale deploy karpenter --replicas=0; sleep 10
-            kubectl delete nodepool --all --wait=false 
-            kubectl delete nodeclaim --all --wait=false
+              if kubectl -n karpenter get deploy karpenter >/dev/null 2>&1; then
+                kubectl -n karpenter scale deploy karpenter --replicas=0; sleep 10
+              fi
+
+              kubectl delete nodepool --all --wait=false --ignore-not-found=true
+              kubectl delete nodeclaim --all --wait=false --ignore-not-found=true
           else
             echo "Kubernetes API not reachable; skipping Karpenter K8s purge."
           fi
