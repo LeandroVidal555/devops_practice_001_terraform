@@ -37,7 +37,7 @@ resource "aws_eks_access_entry" "karpenter_nodes" {
 # why is it SO LONG?: https://github.com/aws/karpenter-provider-aws/blob/main/website/content/en/docs/getting-started/getting-started-with-karpenter/cloudformation.yaml
 
 # Trust policy
-data "aws_iam_policy_document" "karpenter_controller_assume" {
+data "aws_iam_policy_document" "karpenter_ctrl_tp" {
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -63,7 +63,7 @@ data "aws_iam_policy_document" "karpenter_controller_assume" {
 
 resource "aws_iam_role" "karpenter_controller" {
   name               = "${var.cluster_name}-karpenter-ctrl-role"
-  assume_role_policy = data.aws_iam_policy_document.karpenter_controller_assume.json # trust policy
+  assume_role_policy = data.aws_iam_policy_document.karpenter_ctrl_tp.json # trust policy
 }
 
 # These are the actual permissions of the controller

@@ -301,8 +301,8 @@ jobs:
             module.monitoring[0].helm_release.node_exporter \
             module.monitoring[0].helm_release.loki \
             module.monitoring[0].helm_release.promtail \
-            kubernetes_namespace_v1.karpenter \
-            helm_release.karpenter
+            module.karpenter[0].kubernetes_namespace_v1.karpenter \
+            module.karpenter[0].helm_release.karpenter
           do
             terraform state rm "$resource" || true
           done
