@@ -72,11 +72,8 @@ locals {
     alb_app_name   = "${var.env}-${var.common_prefix}-app-alb"
     alb_admin_name = "${var.env}-${var.common_prefix}-admin-alb"
     alb_domains    = "argo.${var.env}.${var.tl_domain},grafana.${var.env}.${var.tl_domain}"
-    cfront_zone_id = "Z2FDTNDATAQYW2"
+    cfront_zone_id = "Z2FDTNDATAQYW2" # internal AWS zone ID, not ours!
     python_runtime = "python3.12"
     bucket_name    = "${var.env}-${var.common_prefix}-cloudtrail"
-  }
-  karpenter = {
-    service_account = "karpenter"
   }
 }

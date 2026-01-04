@@ -58,7 +58,7 @@ data "aws_iam_policy_document" "karpenter_controller_assume" {
     condition {
       test     = "StringEquals"
       variable = "${replace(data.aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:karpenter:${local.karpenter.service_account}"]
+      values   = ["system:serviceaccount:karpenter:karpenter"]
     }
   }
 }

@@ -39,7 +39,7 @@ resource "helm_release" "karpenter" {
 
       serviceAccount = {
         create = true
-        name   = local.karpenter.service_account
+        name   = "karpenter"
         annotations = {
           "eks.amazonaws.com/role-arn" = aws_iam_role.karpenter_controller.arn
         }
