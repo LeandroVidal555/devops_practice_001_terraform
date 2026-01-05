@@ -289,6 +289,12 @@ jobs:
               --query "Reservations[].Instances[].InstanceId" --output text \
             | xargs -r aws ec2 terminate-instances --instance-ids | jq -r '.TerminatingInstances[].InstanceId | "Terminating instance: \(.)"'
 
+          aws ec2 describe-network-interfaces \
+              --filters "Name=tag:eks:eni:owner,Values=amazon-vpc-cni" \
+              --query "NetworkInterfaces[].NetworkInterfaceId" --output text \
+            | xargs -r -n1 aws ec2 delete-network-interface --network-interface-id
+
+
       - name: Remove usual EKS blockers from TF State
         run: |
           for resource in \
