@@ -68,13 +68,13 @@ module "updater_lambda" {
 }
 
 resource "time_sleep" "wait_60s" {
-  depends_on = [ module.updater_lambda ]
-  
+  depends_on = [module.updater_lambda]
+
   create_duration = "60s"
 }
 
 module "app_infra" {
-  depends_on = [ time_sleep.wait_60s ]
+  depends_on = [time_sleep.wait_60s]
 
   source = "./app_infra"
 
@@ -84,7 +84,7 @@ module "app_infra" {
 }
 
 module "karpenter" {
-  depends_on = [ module.eks ]
+  depends_on = [module.eks]
 
   source = "./karpenter"
 
