@@ -288,7 +288,7 @@ jobs:
               --filters "Name=tag:karpenter.sh/nodepool,Values=*" "Name=tag:kubernetes.io/cluster/dev-dp-001-cluster,Values=owned" \
               --query "Reservations[].Instances[].InstanceId" --output text \
             | xargs -r aws ec2 terminate-instances --instance-ids | jq -r '.TerminatingInstances[].InstanceId | "Terminating instance: \(.)"'
-          sleep 10
+          sleep 20
           
           aws ec2 describe-network-interfaces \
               --filters "Name=tag:eks:eni:owner,Values=amazon-vpc-cni" \
